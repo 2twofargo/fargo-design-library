@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fargo Design Library</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#070707;--panel:#0f0f0f;--surface:#141414;--border:#1c1c1c;--border2:#252525;--muted:#3a3a3a;--mid:#555;--light:#888;--off:#bbb;--white:#fff;--gold:#c9a84c;--gd:rgba(201,168,76,.08);--gd2:rgba(201,168,76,.2)}
+html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--off);-webkit-font-smoothing:antialiased}
+button{font-family:'Inter',sans-serif;cursor:pointer;border:none;background:none}
+
+/* ── LAYOUT ── */
+.app{display:grid;grid-template-rows:52px 1fr;height:100vh;overflow:hidden}
+
+/* ── HEADER ── */
+.header{display:flex;align-items:center;gap:10px;padding:0 20px;border-bottom:1px solid var(--border);background:rgba(7,7,7,.97);backdrop-filter:blur(12px);position:relative;z-index:50}
+.logo{font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:14px;color:var(--gold);white-space:nowrap}
+.logo-sub{font-size:10px;color:var(--mid);font-family:'JetBrains Mono',monospace;display:none}
+.search{flex:1;max-width:280px;background:var(--surface);border:1px solid var(--border2);padding:7px 12px;font-size:12px;color:var(--off);outline:none;font-family:'Inter',sans-serif;margin-left:12px}
+.search:focus{border-color:var(--gd2)}
+.search::placeholder{color:var(--muted)}
+.h-count{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--mid);margin-left:auto;white-space:nowrap}
+
+/* Sync status */
+.sync-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mid);padding:0 10px;white-space:nowrap}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);flex-shrink:0}
+.sync-dot.synced{background:#39ff14;box-shadow:0 0 6px rgba(57,255,20,.5)}
+.sync-dot.syncing{background:var(--gold);animation:pulse 1s infinite}
+.sync-dot.error{background:var(--red,#e63535)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+.h-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;font-size:11px;font-weight:600;transition:.12s;white-space:nowrap;border:1px solid var(--border2);color:var(--light)}
+.h-btn:hover{color:var(--gold);border-color:var(--gd2)}
+.h-btn.primary{background:var(--gold);color:#000;border-color:var(--gold)}
+.h-btn.primary:hover{background:#d4ae58;border-color:#d4ae58}
+
+/* ── BODY ── */
+.body{display:grid;grid-template-columns:158px 1fr;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.sidebar{border-right:1px solid var(--border);padding:14px 0;overflow-y:auto;background:var(--panel)}
+.sb-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding:0 14px;margin-bottom:7px}
+.cat-btn{display:flex;align-items:center;justify-content:space-between;width:100%;padding:7px 14px;font-size:12px;color:var(--light);transition:all .12s;font-weight:500;text-align:left}
+.cat-btn:hover{color:var(--off);background:rgba(255,255,255,.03)}
+.cat-btn.active{color:var(--gold);background:var(--gd)}
+.cat-count{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);background:var(--border2);padding:1px 5px}
+.cat-btn.active .cat-count{color:var(--gold);background:var(--gd);border:1px solid var(--gd2)}
+
+/* ── MAIN ── */
+.main{overflow-y:auto;padding:18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
+
+/* ── COMPONENT CARD ── */
+.comp-card{background:var(--panel);border:1px solid var(--border);overflow:hidden;transition:.15s}
+.comp-card:hover{border-color:var(--border2)}
+.preview-wrap{position:relative;height:190px;background:var(--bg);overflow:hidden;cursor:pointer}
+.preview-wrap iframe{width:200%;height:200%;border:none;transform:scale(.5);transform-origin:top left;pointer-events:none}
+.preview-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0);transition:.2s;opacity:0}
+.preview-wrap:hover .preview-overlay{opacity:1;background:rgba(0,0,0,.55)}
+.p-btn{padding:7px 16px;background:var(--white);color:#000;font-size:11px;font-weight:700;letter-spacing:.5px}
+.card-foot{padding:11px 14px;display:flex;align-items:center;gap:7px;border-top:1px solid var(--border)}
+.card-name{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--white);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c-tag{font-size:9px;font-weight:600;padding:2px 6px;border:1px solid var(--border2);color:var(--mid);white-space:nowrap;font-family:'JetBrains Mono',monospace}
+.c-tag.react{color:#61dafb;border-color:rgba(97,218,251,.2);background:rgba(97,218,251,.04)}
+.code-btn{display:flex;align-items:center;gap:4px;padding:5px 10px;background:var(--surface);border:1px solid var(--border2);font-size:11px;color:var(--light);transition:.12s;white-space:nowrap}
+.code-btn:hover{border-color:var(--gd2);color:var(--gold)}
+
+/* ── CODE MODAL ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:100;align-items:center;justify-content:center;padding:20px}
+.modal-bg.open{display:flex}
+.modal{background:var(--panel);border:1px solid var(--border2);width:100%;max-width:900px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden}
+.modal-head{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.modal-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--white);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.m-tab{padding:5px 13px;font-size:11px;color:var(--mid);border:1px solid var(--border2);transition:.12s}
+.m-tab.active{color:var(--gold);border-color:var(--gd2);background:var(--gd)}
+.m-tab:hover{color:var(--off)}
+.copy-btn{padding:6px 14px;background:var(--gold);color:#000;font-size:11px;font-weight:700;transition:.12s}
+.copy-btn:hover{background:#d4ae58}
+.x-btn{width:26px;height:26px;display:flex;align-items:center;justify-content:center;color:var(--mid);border:1px solid var(--border2);font-size:13px;transition:.12s}
+.x-btn:hover{color:var(--white)}
+.modal-body{flex:1;overflow:hidden;min-height:440px}
+.code-panel{height:100%;overflow-y:auto;padding:14px;background:var(--bg)}
+pre{font-family:'JetBrains Mono',monospace;font-size:11px;color:#e2c08d;line-height:1.65;white-space:pre-wrap;word-break:break-word}
+.preview-panel{height:100%}
+.preview-panel iframe{width:100%;height:100%;border:none}
+
+/* ── SETTINGS MODAL ── */
+.settings-modal{background:var(--panel);border:1px solid var(--border2);width:100%;max-width:520px;overflow:hidden}
+.s-body{padding:22px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;max-height:80vh}
+.field label{display:block;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--mid);margin-bottom:6px}
+.field input{width:100%;background:var(--bg);border:1px solid var(--border2);padding:9px 12px;font-size:12px;color:var(--off);outline:none;font-family:'JetBrains Mono',monospace}
+.field input:focus{border-color:var(--gd2)}
+.field-hint{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5}
+.field-hint a{color:var(--gold);text-decoration:none}
+.s-footer{display:flex;gap:8px;justify-content:flex-end;padding-top:8px;border-top:1px solid var(--border)}
+.s-footer button{padding:7px 18px;font-size:12px;font-weight:600}
+.s-test{display:none;font-size:11px;padding:8px 12px;border-left:3px solid var(--border)}
+.s-test.ok{border-color:#39ff14;color:#39ff14;background:rgba(57,255,20,.06)}
+.s-test.err{border-color:#e63535;color:#e63535;background:rgba(230,53,53,.06)}
+
+/* ── ADD MODAL ── */
+.add-modal{background:var(--panel);border:1px solid var(--border2);width:100%;max-width:600px;overflow:hidden}
+.add-body{padding:18px;display:flex;flex-direction:column;gap:12px;max-height:85vh;overflow-y:auto}
+.add-body input,.add-body select,.add-body textarea{width:100%;background:var(--bg);border:1px solid var(--border2);padding:8px 12px;font-size:12px;color:var(--off);outline:none;font-family:'JetBrains Mono',monospace;resize:vertical}
+.add-body input,.add-body select{font-family:'Inter',sans-serif}
+.add-body input:focus,.add-body select:focus,.add-body textarea:focus{border-color:var(--gd2)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fl{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--mid);display:block;margin-bottom:5px}
+
+/* ── DRAG DROP ── */
+.drop-zone{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.88);align-items:center;justify-content:center;flex-direction:column;gap:10px;pointer-events:none}
+.drop-zone.active{display:flex;pointer-events:all}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--gold);color:#000;padding:9px 18px;font-size:12px;font-weight:700;z-index:300;transform:translateY(60px);opacity:0;transition:.3s}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.err{background:#e63535;color:#fff}
+
+/* ── EMPTY ── */
+.empty{grid-column:1/-1;text-align:center;padding:70px 20px;color:var(--muted)}
+.empty-icon{font-size:2.5rem;margin-bottom:12px}
+
+@media(max-width:700px){.body{grid-template-columns:1fr}.sidebar{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo">Fargo</div>
+    <div class="logo-sub">Design Library</div>
+    <input class="search" type="text" placeholder="Search..." id="search" oninput="filterComponents()">
+    <div class="h-count" id="count-display">– components</div>
+
+    <!-- GitHub sync status -->
+    <div class="sync-status" id="syncStatus" style="display:none">
+      <div class="sync-dot" id="syncDot"></div>
+      <span id="syncLabel">–</span>
+    </div>
+
+    <button class="h-btn" id="syncBtn" style="display:none" onclick="syncToGitHub()">↑ Sync</button>
+
+    <label class="h-btn" title="Import JSON file" style="cursor:pointer">
+      ↑ Import
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(this)">
+    </label>
+    <button class="h-btn primary" onclick="openAddModal()">+ Add</button>
+    <button class="h-btn" onclick="openSettings()" title="GitHub Settings">⚙</button>
+  </header>
+
+  <div class="body">
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+      <div class="sb-label" style="margin-top:4px">Categories</div>
+      <button class="cat-btn active" data-cat="all" onclick="selectCat('all',this)">All <span class="cat-count" id="cnt-all">0</span></button>
+      <button class="cat-btn" data-cat="backgrounds" onclick="selectCat('backgrounds',this)">Backgrounds <span class="cat-count" id="cnt-backgrounds">0</span></button>
+      <button class="cat-btn" data-cat="cards" onclick="selectCat('cards',this)">Cards <span class="cat-count" id="cnt-cards">0</span></button>
+      <button class="cat-btn" data-cat="text" onclick="selectCat('text',this)">Text Effects <span class="cat-count" id="cnt-text">0</span></button>
+      <button class="cat-btn" data-cat="animation" onclick="selectCat('animation',this)">Animation <span class="cat-count" id="cnt-animation">0</span></button>
+      <button class="cat-btn" data-cat="buttons" onclick="selectCat('buttons',this)">Buttons <span class="cat-count" id="cnt-buttons">0</span></button>
+      <button class="cat-btn" data-cat="navigation" onclick="selectCat('navigation',this)">Navigation <span class="cat-count" id="cnt-navigation">0</span></button>
+      <button class="cat-btn" data-cat="layouts" onclick="selectCat('layouts',this)">Layouts <span class="cat-count" id="cnt-layouts">0</span></button>
+      <button class="cat-btn" data-cat="galleries" onclick="selectCat('galleries',this)">Galleries <span class="cat-count" id="cnt-galleries">0</span></button>
+      <button class="cat-btn" data-cat="forms" onclick="selectCat('forms',this)">Forms <span class="cat-count" id="cnt-forms">0</span></button>
+      <button class="cat-btn" data-cat="custom" onclick="selectCat('custom',this)">My Own <span class="cat-count" id="cnt-custom">0</span></button>
+    </nav>
+
+    <!-- MAIN GRID -->
+    <main class="main">
+      <div class="drop-zone" id="dropZone">
+        <div style="font-size:2.5rem">📦</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:var(--gold)">Drop JSON to import</div>
+        <div style="font-size:12px;color:#555">Release to add to your library</div>
+      </div>
+      <div class="grid" id="grid"></div>
+    </main>
+  </div>
+</div>
+
+<!-- CODE / PREVIEW MODAL -->
+<div class="modal-bg" id="codeModal" onclick="closeBg(event,'codeModal')">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="modalTitle"></div>
+      <span id="modalTag" class="c-tag"></span>
+      <button class="m-tab active" id="tabCode" onclick="switchTab('code')">Code</button>
+      <button class="m-tab" id="tabPreview" onclick="switchTab('preview')">Preview</button>
+      <button class="copy-btn" onclick="copyCode()" id="copyBtn">Copy</button>
+      <button class="x-btn" onclick="closeModal('codeModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="code-panel" id="codePanel"><pre id="codeContent"></pre></div>
+      <div class="preview-panel" id="previewPanel" style="display:none"><iframe id="previewFrame" sandbox="allow-scripts allow-same-origin"></iframe></div>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-bg" id="settingsModal" onclick="closeBg(event,'settingsModal')">
+  <div class="settings-modal">
+    <div class="modal-head">
+      <div class="modal-title">⚙ GitHub Settings</div>
+      <button class="x-btn" onclick="closeModal('settingsModal')">✕</button>
+    </div>
+    <div class="s-body">
+      <div style="font-size:12px;color:var(--mid);line-height:1.7;padding:10px 12px;background:var(--bg);border:1px solid var(--border)">
+        Connect your library to GitHub so components sync across every device and are always backed up.
+        Your token is stored only in this browser — never sent anywhere except GitHub directly.
+      </div>
+      <div class="field">
+        <label>GitHub Username</label>
+        <input type="text" id="gh-owner" placeholder="yourusername">
+      </div>
+      <div class="field">
+        <label>Repository Name</label>
+        <input type="text" id="gh-repo" placeholder="fargo-design-library">
+        <div class="field-hint">Create a new repo at <a href="https://github.com/new" target="_blank">github.com/new</a> — can be public or private</div>
+      </div>
+      <div class="field">
+        <label>Personal Access Token</label>
+        <input type="password" id="gh-token" placeholder="ghp_...">
+        <div class="field-hint">Get one at <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a> — needs <strong style="color:var(--gold)">repo</strong> scope</div>
+      </div>
+      <div id="s-test-result" class="s-test"></div>
+      <div class="s-footer">
+        <button onclick="testConnection()" style="border:1px solid var(--border2);color:var(--light);background:none">Test Connection</button>
+        <button onclick="saveSettings()" style="background:var(--gold);color:#000">Save & Connect</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD MODAL -->
+<div class="modal-bg" id="addModal" onclick="closeBg(event,'addModal')">
+  <div class="add-modal">
+    <div class="modal-head">
+      <div class="modal-title">Add Component</div>
+      <button class="x-btn" onclick="closeModal('addModal')">✕</button>
+    </div>
+    <div class="add-body">
+      <div class="form-row">
+        <div><label class="fl">Name</label><input type="text" id="addName" placeholder="e.g. Glassmorphism Card"></div>
+        <div><label class="fl">Category</label>
+          <select id="addCat">
+            <option value="custom">My Own</option>
+            <option value="backgrounds">Backgrounds</option>
+            <option value="cards">Cards</option>
+            <option value="animation">Animation</option>
+            <option value="text">Text Effects</option>
+            <option value="buttons">Buttons</option>
+            <option value="navigation">Navigation</option>
+            <option value="layouts">Layouts</option>
+            <option value="galleries">Galleries</option>
+            <option value="forms">Forms</option>
+          </select>
+        </div>
+      </div>
+      <div><label class="fl">Tags (comma separated)</label><input type="text" id="addTags" placeholder="CSS, Hover, Dark"></div>
+      <div><label class="fl">Description</label><input type="text" id="addDesc" placeholder="What does this do?"></div>
+      <div><label class="fl">Full HTML Code</label><textarea id="addCode" style="height:180px;font-size:11px" placeholder="<!DOCTYPE html>..."></textarea></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button onclick="closeModal('addModal')" style="padding:7px 16px;border:1px solid var(--border2);color:var(--light);font-size:12px">Cancel</button>
+        <button onclick="saveComponent()" style="padding:7px 20px;background:var(--gold);color:#000;font-size:12px;font-weight:700">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── BUILT-IN COMPONENTS ───────────────────────────────────────────────────────
+const BUILT_IN = [
+  {id:'bi-1',name:'Aurora Background',category:'backgrounds',tags:['CSS','Animation'],desc:'Animated gradient blobs.',
+   code:`<!DOCTYPE html><html><head><style>*{margin:0;padding:0;box-sizing:border-box}body{background:#080808;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;font-family:sans-serif}.aurora{position:absolute;inset:0;pointer-events:none}.blob{position:absolute;border-radius:50%;filter:blur(80px);animation:drift 6s ease-in-out infinite alternate}.b1{width:400px;height:400px;background:rgba(120,40,200,.5);top:-100px;left:-100px}.b2{width:350px;height:350px;background:rgba(40,120,255,.4);top:50%;right:-80px;animation-delay:-2s}.b3{width:300px;height:300px;background:rgba(200,80,120,.3);bottom:-80px;left:30%;animation-delay:-4s}@keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(30px,40px) scale(1.1)}}h1{position:relative;z-index:1;color:#fff;font-size:3rem;font-weight:800;letter-spacing:-2px}span{background:linear-gradient(135deg,#a78bfa,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}</style></head><body><div class="aurora"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div><h1>Aurora <span>Effect</span></h1></body></html>`},
+  {id:'bi-2',name:'3D Tilt Card',category:'cards',tags:['JS','3D','Interactive'],desc:'Card tilts in 3D with cursor glow.',
+   code:`<!DOCTYPE html><html><head><style>*{margin:0;padding:0;box-sizing:border-box}body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0a0a0a;font-family:sans-serif;perspective:1000px;gap:20px}.card{width:220px;height:300px;background:linear-gradient(145deg,#161624,#0e0e1e);border:1px solid rgba(255,255,255,.08);padding:24px;cursor:pointer;transition:transform .12s;position:relative;overflow:hidden}.glow{position:absolute;width:180px;height:180px;border-radius:50%;background:rgba(201,168,76,.2);filter:blur(35px);pointer-events:none;transform:translate(-50%,-50%);opacity:0;transition:.3s}.icon{font-size:1.8rem;margin-bottom:14px;position:relative;z-index:1}h3{color:#fff;font-size:.95rem;font-weight:700;margin-bottom:7px;position:relative;z-index:1}p{color:rgba(255,255,255,.45);font-size:.75rem;line-height:1.6;position:relative;z-index:1}</style><script>function init(card){const g=card.querySelector('.glow');card.addEventListener('mousemove',e=>{const r=card.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;card.style.transform='rotateX('+-(y-r.height/2)/12+'deg) rotateY('+(x-r.width/2)/12+'deg) scale(1.04)';g.style.left=x+'px';g.style.top=y+'px';g.style.opacity='1'});card.addEventListener('mouseleave',()=>{card.style.transform='';g.style.opacity='0'})}window.addEventListener('DOMContentLoaded',()=>document.querySelectorAll('.card').forEach(init));<\/script></head><body><div class="card"><div class="glow"></div><div class="icon">⚡</div><h3>3D Tilt Card</h3><p>Mouse drives rotateX/Y. Radial glow follows cursor position.</p></div><div class="card"><div class="glow"></div><div class="icon">🎬</div><h3>Hover Me Too</h3><p>Works on any card. Reuse the init() function on any element.</p></div></body></html>`},
+  {id:'bi-3',name:'Typewriter Hero',category:'text',tags:['JS','Animation'],desc:'Words type and delete in a loop.',
+   code:`<!DOCTYPE html><html><head><style>*{margin:0;padding:0;box-sizing:border-box}body{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#080808;font-family:sans-serif;color:#fff;text-align:center}.pre{font-size:.65rem;color:#444;letter-spacing:4px;text-transform:uppercase;margin-bottom:20px}h1{font-size:3.5rem;font-weight:900;letter-spacing:-3px;line-height:1}.tw{color:#c9a84c}.cursor{display:inline-block;width:3px;height:.85em;background:#c9a84c;animation:blink .65s step-end infinite;vertical-align:middle}@keyframes blink{50%{opacity:0}}.sub{color:#333;font-size:.75rem;margin-top:18px;letter-spacing:2px;text-transform:uppercase}</style><script>const words=['Developer','Filmmaker','Builder','Creator'];let wi=0,ci=0,del=false,paused=false;function type(){if(paused)return;const el=document.getElementById('t');const w=words[wi];if(!del){el.textContent=w.slice(0,++ci);if(ci===w.length){del=true;paused=true;setTimeout(()=>{paused=false;type()},1500);return}}else{el.textContent=w.slice(0,--ci);if(ci===0){del=false;wi=(wi+1)%words.length}}setTimeout(type,del?55:110)}window.addEventListener('DOMContentLoaded',type);<\/script></head><body><div class="pre">Kwadir Scott</div><h1>I am a <span class="tw" id="t"></span><span class="cursor"></span></h1><div class="sub">Philadelphia · Software · Film</div></body></html>`},
+  {id:'bi-4',name:'Particle Network',category:'backgrounds',tags:['Canvas','JS','Interactive'],desc:'Connected particles respond to mouse.',
+   code:`<!DOCTYPE html><html><head><style>*{margin:0;padding:0;box-sizing:border-box}body{background:#050505;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;font-family:sans-serif}canvas{position:absolute;inset:0}.content{position:relative;z-index:1;text-align:center;color:#fff}h1{font-size:2.5rem;font-weight:800;letter-spacing:-1px;margin-bottom:8px}p{color:rgba(255,255,255,.3);font-size:.75rem;letter-spacing:3px;text-transform:uppercase}</style></head><body><canvas id="c"></canvas><div class="content"><h1>Particle Network</h1><p>Move your mouse</p></div><script>const c=document.getElementById('c');const ctx=c.getContext('2d');let W=c.width=window.innerWidth,H=c.height=window.innerHeight,mx=W/2,my=H/2;const pts=[];for(let i=0;i<90;i++)pts.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4});document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});function draw(){ctx.clearRect(0,0,W,H);pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;const dx=p.x-mx,dy=p.y-my,d=Math.sqrt(dx*dx+dy*dy);ctx.beginPath();ctx.arc(p.x,p.y,d<150?2.5:1,0,Math.PI*2);ctx.fillStyle=d<150?'rgba(201,168,76,.9)':'rgba(255,255,255,.2)';ctx.fill();pts.forEach(q=>{const d2=Math.sqrt((p.x-q.x)**2+(p.y-q.y)**2);if(d2<110){ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);ctx.strokeStyle='rgba(201,168,76,'+(1-d2/110)*.12+')';ctx.lineWidth=.8;ctx.stroke()}})});requestAnimationFrame(draw)}draw();window.addEventListener('resize',()=>{W=c.width=window.innerWidth;H=c.height=window.innerHeight});<\/script></body></html>`},
+  {id:'bi-5',name:'Magnetic Button',category:'buttons',tags:['JS','Interaction'],desc:'Button follows mouse, gold fill on hover.',
+   code:`<!DOCTYPE html><html><head><style>*{margin:0;padding:0;box-sizing:border-box}body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#050505;font-family:sans-serif;gap:24px;flex-wrap:wrap}.wrap{position:relative;display:inline-block}.btn{display:block;padding:14px 38px;background:transparent;border:1px solid rgba(255,255,255,.2);color:#fff;font-size:.85rem;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:border-color .3s,transform .12s ease-out;position:relative;overflow:hidden;font-weight:600}.btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#c9a84c,#ff6b00);opacity:0;transition:.3s;z-index:0}.btn:hover{border-color:transparent}.btn:hover::before{opacity:1}.btn span{position:relative;z-index:1;transition:color .3s}.btn:hover span{color:#000}</style><script>document.querySelectorAll('.wrap').forEach(w=>{const b=w.querySelector('.btn');w.addEventListener('mousemove',e=>{const r=w.getBoundingClientRect(),x=(e.clientX-r.left-r.width/2)*.38,y=(e.clientY-r.top-r.height/2)*.38;b.style.transform='translate('+x+'px,'+y+'px)'});w.addEventListener('mouseleave',()=>b.style.transform='')});<\/script></head><body><div class="wrap"><button class="btn"><span>Gold Magnetic</span></button></div><div class="wrap"><button class="btn" style="border-color:rgba(168,85,247,.3)"><span style="transition:color .3s">Purple Magnetic</span></button></div></body></html>`},
+  {id:'bi-6',name:'Scrolling Marquee',category:'text',tags:['CSS','Loop'],desc:'Two rows scrolling in opposite directions.',
+   code:`<!DOCTYPE html><html><head><style>*{margin:0;padding:0;box-sizing:border-box}body{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#080808;font-family:sans-serif;overflow:hidden}.track{width:100%;overflow:hidden;border-top:1px solid #1a1a1a;border-bottom:1px solid #1a1a1a;padding:13px 0}.track+.track{border-top:none;margin-top:10px}.inner{display:flex;width:max-content;animation:scroll 18s linear infinite}.track.rev .inner{animation-direction:reverse}@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}.item{font-size:1rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;white-space:nowrap;color:rgba(255,255,255,.5);padding:0 28px}.item.hi{color:#c9a84c}.dot{color:#1e1e1e;font-size:.7rem;padding:0 4px}</style></head><body><div class="track"><div class="inner"><span class="item hi">Film Direction</span><span class="dot">✦</span><span class="item">Software Dev</span><span class="dot">✦</span><span class="item hi">Philadelphia</span><span class="dot">✦</span><span class="item">Brand Identity</span><span class="dot">✦</span><span class="item hi">Video Production</span><span class="dot">✦</span><span class="item">Web Design</span><span class="dot">✦</span><span class="item hi">Film Direction</span><span class="dot">✦</span><span class="item">Software Dev</span><span class="dot">✦</span><span class="item hi">Philadelphia</span><span class="dot">✦</span><span class="item">Brand Identity</span><span class="dot">✦</span><span class="item hi">Video Production</span><span class="dot">✦</span><span class="item">Web Design</span><span class="dot">✦</span></div></div><div class="track rev"><div class="inner"><span class="item">Event Production</span><span class="dot">★</span><span class="item hi">Grandioso</span><span class="dot">★</span><span class="item">Photography</span><span class="dot">★</span><span class="item hi">Community</span><span class="dot">★</span><span class="item">Creative Direction</span><span class="dot">★</span><span class="item hi">Hunting Park</span><span class="dot">★</span><span class="item">Event Production</span><span class="dot">★</span><span class="item hi">Grandioso</span><span class="dot">★</span><span class="item">Photography</span><span class="dot">★</span><span class="item hi">Community</span><span class="dot">★</span><span class="item">Creative Direction</span><span class="dot">★</span><span class="item hi">Hunting Park</span><span class="dot">★</span></div></div></body></html>`},
+  {id:'bi-7',name:'Glassmorphism Cards',category:'cards',tags:['CSS','Glass'],desc:'Frosted glass cards over gradient.',
+   code:`<!DOCTYPE html><html><head><style>*{margin:0;padding:0;box-sizing:border-box}body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a0533,#0d1b4b);font-family:sans-serif;gap:20px;flex-wrap:wrap;padding:40px}.card{background:rgba(255,255,255,.07);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.12);padding:28px;width:230px;transition:.25s;cursor:pointer}.card:hover{background:rgba(255,255,255,.11);transform:translateY(-4px)}.tag{font-size:9px;color:rgba(255,255,255,.4);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}h2{color:#fff;font-size:1.1rem;margin-bottom:7px;font-weight:700}p{color:rgba(255,255,255,.5);font-size:.78rem;line-height:1.65;margin-bottom:18px}.btn{display:inline-block;padding:7px 18px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.8);font-size:.72rem;transition:.2s;cursor:pointer}.btn:hover{background:rgba(255,255,255,.18)}</style></head><body><div class="card"><div class="tag">Design System</div><h2>Glassmorphism</h2><p>backdrop-filter creates a frosted effect. Works beautifully on dark gradients.</p><div class="btn">Learn More</div></div><div class="card"><div class="tag">Component</div><h2>Frosted Layer</h2><p>Layer multiple glass cards at different depths for visual hierarchy and depth.</p><div class="btn">Explore</div></div></body></html>`},
+  {id:'bi-8',name:'Glitch Text',category:'text',tags:['CSS','Animation'],desc:'Chromatic aberration glitch effect.',
+   code:`<!DOCTYPE html><html><head><style>*{margin:0;padding:0;box-sizing:border-box}body{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#050505;font-family:'Courier New',monospace;gap:16px}.glitch{font-size:5rem;font-weight:900;color:#fff;position:relative;letter-spacing:-3px;cursor:default;user-select:none}.glitch::before,.glitch::after{content:attr(data-text);position:absolute;top:0;left:0;width:100%;height:100%}.glitch::before{color:#0ff;clip-path:polygon(0 25%,100% 25%,100% 45%,0 45%);animation:g1 3s infinite linear;opacity:.85}.glitch::after{color:#f0f;clip-path:polygon(0 60%,100% 60%,100% 80%,0 80%);animation:g2 2.5s infinite linear;opacity:.85}@keyframes g1{0%,88%,100%{transform:translate(0)}90%{transform:translate(-5px,2px)}94%{transform:translate(5px,-1px)}}@keyframes g2{0%,86%,100%{transform:translate(0)}88%{transform:translate(4px,1px)}92%{transform:translate(-4px,-2px)}}.sub{font-size:.75rem;color:#333;letter-spacing:4px;text-transform:uppercase;font-family:sans-serif}</style></head><body><div class="glitch" data-text="GLITCH">GLITCH</div><div class="sub">Chromatic Aberration Effect</div></body></html>`},
+];
+
+// ── GITHUB API ────────────────────────────────────────────────────────────────
+const GH = {
+  get owner()  { return localStorage.getItem('gh_owner') || ''; },
+  get repo()   { return localStorage.getItem('gh_repo')  || ''; },
+  get token()  { return localStorage.getItem('gh_token') || ''; },
+  get branch() { return localStorage.getItem('gh_branch')|| 'main'; },
+  configured() { return !!(this.owner && this.repo && this.token); },
+  rawUrl(file) { return `https://raw.githubusercontent.com/${this.owner}/${this.repo}/${this.branch}/${file}?t=${Date.now()}`; },
+  apiUrl(file) { return `https://api.github.com/repos/${this.owner}/${this.repo}/contents/${file}`; },
+};
+
+async function ghGet(url) {
+  const res = await fetch(url, {
+    headers: { 'Authorization': `Bearer ${GH.token}`, 'Accept': 'application/vnd.github.v3+json' }
+  });
+  return res;
+}
+
+async function loadFromGitHub() {
+  if (!GH.configured()) return null;
+  try {
+    const res = await fetch(GH.rawUrl('fargo-library.json'));
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.components || [];
+  } catch(e) { return null; }
+}
+
+async function saveToGitHub(allComponents) {
+  if (!GH.configured()) return false;
+  setSyncStatus('syncing', 'Syncing...');
+  try {
+    const payload = JSON.stringify({
+      version: '1.0', updated: new Date().toISOString(),
+      count: allComponents.length, components: allComponents
+    }, null, 2);
+
+    // Get current SHA
+    let sha = null;
+    try {
+      const metaRes = await ghGet(GH.apiUrl('fargo-library.json'));
+      if (metaRes.ok) { const m = await metaRes.json(); sha = m.sha; }
+    } catch(e) {}
+
+    const body = {
+      message: `Update library (${allComponents.length} components)`,
+      content: btoa(unescape(encodeURIComponent(payload))),
+      branch: GH.branch,
+      ...(sha ? { sha } : {}),
+    };
+
+    const res = await fetch(GH.apiUrl('fargo-library.json'), {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${GH.token}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.ok) {
+      setSyncStatus('synced', `Synced · ${new Date().toLocaleTimeString()}`);
+      return true;
+    } else {
+      setSyncStatus('error', 'Sync failed');
+      return false;
+    }
+  } catch(e) {
+    setSyncStatus('error', 'Sync error');
+    return false;
+  }
+}
+
+function setSyncStatus(state, label) {
+  const dot = document.getElementById('syncDot');
+  const lbl = document.getElementById('syncLabel');
+  const bar = document.getElementById('syncStatus');
+  const btn = document.getElementById('syncBtn');
+  if (!dot) return;
+  bar.style.display = 'flex';
+  btn.style.display = 'flex';
+  dot.className = 'sync-dot ' + state;
+  lbl.textContent = label;
+}
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let custom = [];
+let components = [...BUILT_IN];
+let activeCat = 'all';
+let searchQ = '';
+let activeModalId = null;
+let modalTab = 'code';
+let pendingSync = false;
+
+function allComponents() { return [...BUILT_IN, ...custom]; }
+
+function loadCustom() {
+  try { custom = JSON.parse(localStorage.getItem('fargo-custom') || '[]'); } catch(e) { custom = []; }
+  components = allComponents();
+}
+
+function saveCustom() {
+  try { localStorage.setItem('fargo-custom', JSON.stringify(custom)); } catch(e) {}
+}
+
+// ── FILTER ────────────────────────────────────────────────────────────────────
+function getFiltered() {
+  return components.filter(c => {
+    const catOk = activeCat === 'all' || c.category === activeCat;
+    const q = searchQ.toLowerCase();
+    const srOk = !q || c.name.toLowerCase().includes(q) ||
+                 (c.tags||[]).some(t=>t.toLowerCase().includes(q)) ||
+                 (c.desc||'').toLowerCase().includes(q);
+    return catOk && srOk;
+  });
+}
+
+function updateCounts() {
+  const all = components;
+  document.getElementById('cnt-all').textContent = all.length;
+  ['backgrounds','cards','text','animation','buttons','navigation','layouts','galleries','forms','custom'].forEach(cat => {
+    const el = document.getElementById('cnt-'+cat);
+    if (el) el.textContent = all.filter(c=>c.category===cat).length;
+  });
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function render() {
+  const grid = document.getElementById('grid');
+  const filtered = getFiltered();
+  document.getElementById('count-display').textContent = filtered.length + ' component' + (filtered.length!==1?'s':'');
+
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="empty"><div class="empty-icon">◻</div><div>No components match</div></div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(c => {
+    const isReact = c.codeType === 'react';
+    return `<div class="comp-card">
+      <div class="preview-wrap" onclick="openCode('${c.id}')">
+        <iframe srcdoc="${escHtml(c.code)}" sandbox="allow-scripts" loading="lazy"></iframe>
+        <div class="preview-overlay"><button class="p-btn">View Code</button></div>
+      </div>
+      <div class="card-foot">
+        <div class="card-name">${c.name}</div>
+        ${isReact ? '<span class="c-tag react">React</span>' : `<span class="c-tag">${c.category}</span>`}
+        <button class="code-btn" onclick="openCode('${c.id}')">&lt;/&gt;</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function escHtml(str) {
+  return (str||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// ── INTERACTIONS ──────────────────────────────────────────────────────────────
+function selectCat(cat, btn) {
+  activeCat = cat;
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function filterComponents() {
+  searchQ = document.getElementById('search').value;
+  render();
+}
+
+function openCode(id) {
+  const c = components.find(x=>x.id===id);
+  if (!c) return;
+  activeModalId = id;
+  document.getElementById('modalTitle').textContent = c.name;
+  const tagEl = document.getElementById('modalTag');
+  tagEl.textContent = c.codeType === 'react' ? 'React' : c.category;
+  tagEl.className = 'c-tag' + (c.codeType === 'react' ? ' react' : '');
+  document.getElementById('codeContent').textContent = c.code;
+  document.getElementById('previewFrame').srcdoc = c.code;
+  switchTab('code');
+  document.getElementById('codeModal').classList.add('open');
+}
+
+function switchTab(tab) {
+  modalTab = tab;
+  document.getElementById('tabCode').classList.toggle('active', tab==='code');
+  document.getElementById('tabPreview').classList.toggle('active', tab==='preview');
+  document.getElementById('codePanel').style.display    = tab==='code'    ? 'block' : 'none';
+  document.getElementById('previewPanel').style.display = tab==='preview' ? 'block' : 'none';
+}
+
+function copyCode() {
+  const c = components.find(x=>x.id===activeModalId);
+  if (!c) return;
+  navigator.clipboard.writeText(c.rawCode || c.code).then(()=>{
+    document.getElementById('copyBtn').textContent = '✓ Copied!';
+    showToast('Copied to clipboard');
+    setTimeout(()=>document.getElementById('copyBtn').textContent='Copy',2000);
+  }).catch(()=>{
+    const ta = document.createElement('textarea');
+    ta.value = c.rawCode || c.code; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta); showToast('Copied!');
+  });
+}
+
+// ── ADD COMPONENT ─────────────────────────────────────────────────────────────
+function openAddModal() { document.getElementById('addModal').classList.add('open'); }
+
+function saveComponent() {
+  const name = document.getElementById('addName').value.trim();
+  const code = document.getElementById('addCode').value.trim();
+  if (!name || !code) { showToast('Name and code are required', true); return; }
+  const c = {
+    id:       'custom-' + Date.now(),
+    name,
+    category: document.getElementById('addCat').value || 'custom',
+    tags:     document.getElementById('addTags').value.split(',').map(t=>t.trim()).filter(Boolean),
+    desc:     document.getElementById('addDesc').value.trim() || name,
+    code,
+  };
+  custom.push(c);
+  components = allComponents();
+  saveCustom();
+  updateCounts();
+  render();
+  closeModal('addModal');
+  showToast('Component saved');
+  scheduleSyncToGitHub();
+  ['addName','addTags','addDesc','addCode'].forEach(id=>document.getElementById(id).value='');
+}
+
+// ── IMPORT JSON ───────────────────────────────────────────────────────────────
+function importJSON(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      const incoming = data.components || (Array.isArray(data)?data:[data]);
+      const existingIds = new Set(components.map(c=>c.id));
+      let added = 0, dupes = 0;
+      incoming.forEach(c => {
+        if (!c.id) c.id = 'imp-'+Date.now()+'-'+Math.random().toString(36).slice(2,5);
+        if (existingIds.has(c.id)) { dupes++; return; }
+        c.category = c.category || 'custom';
+        c.tags = c.tags || [c.category];
+        c.desc = c.desc || c.name;
+        c.code = c.code || '<!-- no code -->';
+        custom.push(c);
+        existingIds.add(c.id);
+        added++;
+      });
+      components = allComponents();
+      saveCustom();
+      updateCounts();
+      render();
+      showToast(`Imported ${added}${dupes?' ('+dupes+' skipped)':''}`);
+      scheduleSyncToGitHub();
+    } catch(err) { showToast('Invalid JSON: '+err.message, true); }
+    input.value = '';
+  };
+  reader.readAsText(file);
+}
+
+// ── GITHUB SYNC ───────────────────────────────────────────────────────────────
+let syncTimer = null;
+
+function scheduleSyncToGitHub() {
+  if (!GH.configured()) return;
+  if (syncTimer) clearTimeout(syncTimer);
+  setSyncStatus('syncing', 'Pending...');
+  syncTimer = setTimeout(() => syncToGitHub(), 3000);
+}
+
+async function syncToGitHub() {
+  if (!GH.configured()) { openSettings(); return; }
+  if (syncTimer) { clearTimeout(syncTimer); syncTimer = null; }
+  await saveToGitHub(allComponents());
+}
+
+// ── SETTINGS ──────────────────────────────────────────────────────────────────
+function openSettings() {
+  document.getElementById('gh-owner').value = GH.owner;
+  document.getElementById('gh-repo').value  = GH.repo;
+  document.getElementById('gh-token').value = GH.token;
+  document.getElementById('s-test-result').style.display = 'none';
+  document.getElementById('settingsModal').classList.add('open');
+}
+
+function saveSettings() {
+  localStorage.setItem('gh_owner',  document.getElementById('gh-owner').value.trim());
+  localStorage.setItem('gh_repo',   document.getElementById('gh-repo').value.trim());
+  localStorage.setItem('gh_token',  document.getElementById('gh-token').value.trim());
+  localStorage.setItem('gh_branch', 'main');
+  closeModal('settingsModal');
+  showToast('GitHub connected!');
+  setSyncStatus('synced', 'Connected — click Sync to push');
+  document.getElementById('syncBtn').style.display = 'flex';
+  document.getElementById('syncStatus').style.display = 'flex';
+}
+
+async function testConnection() {
+  const owner = document.getElementById('gh-owner').value.trim();
+  const repo  = document.getElementById('gh-repo').value.trim();
+  const token = document.getElementById('gh-token').value.trim();
+  const el = document.getElementById('s-test-result');
+  el.style.display = 'block';
+  el.textContent = 'Testing...';
+  el.className = 's-test';
+  try {
+    const res = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+      headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      el.textContent = `✓ Connected — ${data.full_name} (${data.private?'private':'public'})`;
+      el.className = 's-test ok';
+    } else {
+      el.textContent = `✗ Failed (${res.status}) — check username, repo, and token`;
+      el.className = 's-test err';
+    }
+  } catch(e) {
+    el.textContent = `✗ Error: ${e.message}`;
+    el.className = 's-test err';
+  }
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function closeBg(e, id) { if(e.target.id===id) closeModal(id); }
+
+function showToast(msg, isErr=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isErr?' err':'');
+  setTimeout(()=>t.className='toast', 2400);
+}
+
+// ── DRAG & DROP JSON ──────────────────────────────────────────────────────────
+const dropZone = document.getElementById('dropZone');
+document.addEventListener('dragenter', e => {
+  if([...e.dataTransfer.types].includes('Files')) { dropZone.classList.add('active'); dropZone.style.pointerEvents='all'; }
+});
+document.addEventListener('dragleave', e => {
+  if(!e.relatedTarget||!document.body.contains(e.relatedTarget)) { dropZone.classList.remove('active'); dropZone.style.pointerEvents='none'; }
+});
+document.addEventListener('dragover', e=>e.preventDefault());
+document.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('active'); dropZone.style.pointerEvents='none';
+  const file = e.dataTransfer.files[0];
+  if(!file||!file.name.endsWith('.json')) { showToast('Drop a .json file', true); return; }
+  importJSON({ files:[file], value:'' });
+});
+
+document.addEventListener('keydown', e => {
+  if(e.key==='Escape') ['codeModal','settingsModal','addModal'].forEach(id=>closeModal(id));
+});
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+async function init() {
+  loadCustom();
+
+  if (GH.configured()) {
+    setSyncStatus('syncing', 'Loading from GitHub...');
+    const ghComponents = await loadFromGitHub();
+    if (ghComponents && ghComponents.length > 0) {
+      // Merge GitHub components into custom (skip built-ins)
+      const builtInIds = new Set(BUILT_IN.map(c=>c.id));
+      const fresh = ghComponents.filter(c => !builtInIds.has(c.id));
+      custom = fresh;
+      saveCustom();
+      components = allComponents();
+      setSyncStatus('synced', `Loaded ${ghComponents.length} from GitHub`);
+    } else {
+      setSyncStatus('synced', 'Connected · Push to sync');
+    }
+    document.getElementById('syncBtn').style.display = 'flex';
+    document.getElementById('syncStatus').style.display = 'flex';
+  }
+
+  updateCounts();
+  render();
+}
+
+init();
+</script>
+</body>
+</html>
