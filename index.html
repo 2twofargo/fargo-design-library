@@ -986,17 +986,24 @@ function normalizeStack(raw) {
 }
 function normalizeComp(it, i) {
   const raw = it?.code || it?.html || it?.source || '';
-  if (!raw || typeof raw !== 'string') return null;
+  if (!raw || typeof raw !== 'string' || raw.trim().length < 10) return null;
   const code = raw.split('\n').filter(l => !/^\s*\d+\s*$/.test(l)).join('\n');
   const bm = code.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
-  if (bm && bm[1].replace(/\s+|<![-][^>]*>/g,'').length < 5) return null;
+  // Only filter if body is truly empty — whitespace and comments only
+  if (bm && bm[1].replace(/<![\-][^>]*>/g,'').replace(/\s+/g,'').length === 0) return null;
+  const rawName = String(it?.name || it?.title || 'Component '+(i+1));
+  // UIverse uses random animal names like "fuzzy warthog 48"
+  // Keep the name but it'll be displayed with source badge for context
+  const cat = normalizeCat(it?.category || it?.type);
   return {
     id: String(it?.id || 'r-'+i),
-    name: String(it?.name || it?.title || 'Component '+(i+1)),
-    category: normalizeCat(it?.category || it?.type),
+    name: rawName,
+    category: cat,
     source: String(it?.source || it?.origin || 'FreeFrontend'),
     stack: normalizeStack(it?.stack || it?.framework),
     tags: Array.isArray(it?.tags) ? it.tags.map(String) : [],
+    isSection: it?.isSection || false,
+    sectionType: it?.sectionType || null,
     code,
   };
 }
