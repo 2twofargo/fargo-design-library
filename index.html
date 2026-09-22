@@ -367,6 +367,77 @@ pre{font-family:'JetBrains Mono',monospace;font-size:11px;color:#e2c08d;line-hei
 /* ── EMPTY ───────────────────────────────────────────── */
 .empty{grid-column:1/-1;text-align:center;padding:80px 20px;color:var(--t4)}
 .empty-icon{font-size:2.5rem;margin-bottom:10px}
+
+/* ── BUILD MODE ─────────────────────────────────────────────────── */
+.build-mode-bar{
+  display:none;align-items:center;gap:10px;
+  padding:8px 20px;background:rgba(201,168,76,.06);
+  border-bottom:1px solid var(--gd2);font-size:11px;
+  color:var(--gold);flex-shrink:0;
+}
+.build-mode-bar.active{display:flex}
+.bm-label{font-weight:700;letter-spacing:1px;text-transform:uppercase;font-size:10px}
+.bm-section-pill{
+  padding:4px 10px;border:1px solid var(--gd2);font-size:10px;
+  color:var(--gold);cursor:pointer;transition:.12s;
+}
+.bm-section-pill.active-section{background:var(--gold);color:#000}
+.bm-generate{
+  margin-left:auto;padding:6px 18px;background:var(--gold);
+  color:#000;font-size:11px;font-weight:800;cursor:pointer;
+  border:none;font-family:'Space Grotesk',sans-serif;transition:.12s;
+}
+.bm-generate:hover{background:#d4ae58}
+.bm-generate:disabled{opacity:.4;cursor:not-allowed}
+
+/* Build workspace sidebar */
+.build-workspace{display:none;flex-direction:column;overflow:hidden}
+.build-workspace.active{display:flex}
+.bw-head{padding:12px 14px;border-bottom:1px solid var(--b1);flex-shrink:0}
+.bw-title{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--gold);margin-bottom:2px}
+.bw-sub{font-size:10px;color:var(--t4)}
+.bw-scroll{flex:1;overflow-y:auto;padding:10px 0}
+.bw-section-label{font-size:8.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--t4);padding:8px 14px 4px}
+.bw-field{padding:0 14px;margin-bottom:10px}
+.bw-field label{display:block;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);margin-bottom:4px}
+.bw-field input,.bw-field select{width:100%;background:var(--bg);border:1px solid var(--b2);padding:7px 10px;font-size:11px;color:var(--t1);outline:none;font-family:'Inter',sans-serif}
+.bw-field input:focus,.bw-field select:focus{border-color:var(--gd2)}
+.bw-color-row{display:flex;gap:6px}
+.bw-color-swatch{width:32px;height:32px;border:1px solid var(--b2);position:relative;overflow:hidden;flex-shrink:0;cursor:pointer}
+.bw-color-swatch input[type=color]{position:absolute;inset:-4px;width:calc(100%+8px);height:calc(100%+8px);opacity:0;cursor:pointer}
+.bw-section-item{
+  display:flex;align-items:center;gap:8px;
+  padding:7px 14px;cursor:pointer;transition:.1s;font-size:11px;
+}
+.bw-section-item:hover{background:rgba(255,255,255,.03)}
+.bw-section-item.bsi-active{background:var(--gd1);color:var(--gold)}
+.bw-section-item.bsi-done{color:var(--t2)}
+.bsi-status{width:14px;height:14px;border:1px solid var(--b3);border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:8px}
+.bsi-status.done{background:var(--green);border-color:var(--green);color:#000}
+.bsi-status.active{background:var(--gold);border-color:var(--gold);color:#000}
+.bsi-name{flex:1;font-weight:500}
+.bsi-comp{font-size:9px;color:var(--t4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:70px}
+
+/* Build mode card overlay */
+.c-add-btn{
+  padding:7px 14px;background:var(--gold);color:#000;
+  font-size:11px;font-weight:800;letter-spacing:.5px;
+  border:none;cursor:pointer;transition:.12s;font-family:'Space Grotesk',sans-serif;
+}
+.c-add-btn:hover{background:#d4ae58}
+.c-card.build-selected{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+.c-card.build-selected .c-preview::after{
+  content:'✓ Selected';position:absolute;top:8px;left:8px;
+  background:var(--gold);color:#000;font-size:9px;font-weight:800;
+  padding:3px 8px;letter-spacing:.5px;
+}
+.build-filter-bar{
+  padding:8px 18px;border-bottom:1px solid var(--b1);
+  font-size:11px;color:var(--gold);background:var(--gd1);
+  display:none;
+}
+.build-filter-bar.active{display:block}
+
 </style>
 </head>
 <body>
@@ -399,14 +470,69 @@ pre{font-family:'JetBrains Mono',monospace;font-size:11px;color:#e2c08d;line-hei
         ↑ Import JSON
         <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(this)">
       </label>
-      <button class="tb-btn gold" onclick="openAddModal()">+ Add</button>
+      <button class="tb-btn" id="buildModeBtn" onclick="toggleBuildMode()" style="border-color:var(--gd2);color:var(--gold)">🔨 Build</button>
+    <button class="tb-btn gold" onclick="openAddModal()">+ Add</button>
       <button class="tb-btn" onclick="openSettings()" title="GitHub Settings">⚙</button>
     </div>
   </header>
 
-  <div class="body">
+  <!-- BUILD MODE STATUS BAR -->
+<div class="build-mode-bar" id="buildModeBar">
+  <span class="bm-label">Build Mode</span>
+  <span id="bmClientLabel" style="color:var(--t3)">Select a client type →</span>
+  <div id="bmSectionPills" style="display:flex;gap:4px;flex-wrap:wrap"></div>
+  <button class="bm-generate" id="bmGenerateBtn" onclick="generateFromBuild()" disabled>Generate Site ↓</button>
+  <button onclick="toggleBuildMode()" style="padding:4px 10px;border:1px solid var(--b2);color:var(--t3);background:none;font-size:11px;cursor:pointer">✕ Exit Build</button>
+</div>
+
+<!-- BUILD FILTER BAR (shows above grid when in build mode) -->
+<div class="build-filter-bar" id="buildFilterBar"></div>
+
+<div class="body">
+  <!-- BUILD WORKSPACE SIDEBAR (replaces normal sidebar in build mode) -->
+  <div class="build-workspace" id="buildWorkspace">
+    <div class="bw-head">
+      <div class="bw-title">⚡ Build Workspace</div>
+      <div class="bw-sub">Building a site section by section</div>
+    </div>
+    <div class="bw-scroll">
+      <div class="bw-section-label">Project</div>
+      <div class="bw-field"><label>Business Name</label><input type="text" id="bwBusinessName" placeholder="Client Name" oninput="updateBuildPreview()"></div>
+      <div class="bw-field">
+        <label>Client Type</label>
+        <select id="bwClientType" onchange="updateBuildSections()">
+          <option value="">Select type...</option>
+          <option value="artist">🎨 Artist / Creative</option>
+          <option value="nonprofit">💚 Nonprofit</option>
+          <option value="restaurant">🍕 Restaurant</option>
+          <option value="service">🏢 Service Business</option>
+          <option value="ecommerce">🛍️ E-Commerce</option>
+          <option value="music-events">🎵 Music / Events</option>
+          <option value="corporate">💼 Corporate</option>
+        </select>
+      </div>
+      <div class="bw-section-label">Brand Colors</div>
+      <div class="bw-field">
+        <div class="bw-color-row">
+          <div class="bw-color-swatch" id="bwPrimarySwatch" style="background:#c9a84c" title="Primary Color"><input type="color" value="#c9a84c" oninput="setBuildColor('primary',this.value)"></div>
+          <input type="text" id="bwPrimaryHex" value="#c9a84c" style="flex:1" oninput="setBuildColorHex('primary',this.value)" placeholder="Primary">
+        </div>
+      </div>
+      <div class="bw-field">
+        <div class="bw-color-row">
+          <div class="bw-color-swatch" id="bwSecondarySwatch" style="background:#1a1a2e" title="Secondary Color"><input type="color" value="#1a1a2e" oninput="setBuildColor('secondary',this.value)"></div>
+          <input type="text" id="bwSecondaryHex" value="#1a1a2e" style="flex:1" oninput="setBuildColorHex('secondary',this.value)" placeholder="Secondary">
+        </div>
+      </div>
+      <div class="bw-section-label">Sections</div>
+      <div id="bwSectionList"></div>
+      <div class="bw-field" style="margin-top:12px">
+        <button onclick="generateFromBuild()" style="width:100%;padding:10px;background:var(--gold);color:#000;font-size:11px;font-weight:800;border:none;cursor:pointer;font-family:'Space Grotesk',sans-serif;letter-spacing:.5px">Generate Site ↓</button>
+      </div>
+    </div>
+  </div>
     <!-- SIDEBAR -->
-    <nav class="sidebar">
+    <nav class="sidebar" id="sidebar">
       <div class="sb-mode">
         <button class="sb-mode-btn active" id="modeComponents" onclick="setSidebarMode('components')">Components</button>
         <button class="sb-mode-btn" id="modeGuide" onclick="setSidebarMode('guide')">Client Guide</button>
@@ -1032,6 +1158,338 @@ document.addEventListener('drop',e=>{
   importJSON({files:[file],value:''});
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape')['codeModal','settingsModal','addModal'].forEach(id=>closeModal(id))});
+
+
+// ── BUILD MODE ────────────────────────────────────────────────────────────────
+let buildModeActive = false;
+let buildProject = {
+  businessName: '',
+  clientType: '',
+  primaryColor: '#c9a84c',
+  secondaryColor: '#1a1a2e',
+  activeSection: null,
+  sections: {} // { sectionType: { included: bool, component: null } }
+};
+
+// Section configs per client type
+const CLIENT_SECTIONS = {
+  artist:       ['hero','about','music','gallery','events','contact','footer'],
+  nonprofit:    ['hero','about','donate','events','gallery','team','contact','footer'],
+  restaurant:   ['hero','menu','gallery','about','events','contact','footer'],
+  service:      ['hero','about','services','process','testimonials','pricing','contact','footer'],
+  ecommerce:    ['hero','about','products','gallery','testimonials','contact','footer'],
+  'music-events':['hero','events','gallery','about','contact','footer'],
+  corporate:    ['hero','about','services','team','testimonials','contact','footer'],
+  default:      ['hero','about','services','gallery','contact','footer'],
+};
+
+const SECTION_LABELS = {
+  hero:'Hero', about:'About', music:'Music', gallery:'Gallery',
+  events:'Events', contact:'Contact', footer:'Footer', donate:'Donations',
+  menu:'Menu', services:'Services', process:'Process', testimonials:'Testimonials',
+  pricing:'Pricing', products:'Products', team:'Team',
+};
+
+// What components to show for each section type
+const SECTION_FILTERS = {
+  hero:         { cats:['backgrounds','layouts','text'], keywords:['hero','landing','banner','full'] },
+  about:        { cats:['cards','layouts'], keywords:['about','story','bio','team'] },
+  music:        { cats:['cards','galleries','animation'], keywords:['music','audio','album','player'] },
+  gallery:      { cats:['galleries','cards'], keywords:['gallery','grid','photo','image','masonry'] },
+  events:       { cats:['cards','layouts'], keywords:['event','date','schedule','ticket','calendar'] },
+  services:     { cats:['cards','layouts'], keywords:['service','feature','card','grid','icon'] },
+  process:      { cats:['layouts','cards'], keywords:['step','process','how','timeline'] },
+  testimonials: { cats:['cards'], keywords:['testimonial','review','quote','feedback','star'] },
+  pricing:      { cats:['layouts','cards'], keywords:['pricing','plan','tier','cost','price'] },
+  menu:         { cats:['layouts','cards','forms'], keywords:['menu','list','food','table'] },
+  donate:       { cats:['cards','forms','layouts'], keywords:['donate','fund','campaign','support'] },
+  contact:      { cats:['forms','layouts','cards'], keywords:['contact','form','input','email','map'] },
+  footer:       { cats:['layouts','navigation'], keywords:['footer','bottom','links','social'] },
+  products:     { cats:['cards','galleries'], keywords:['product','shop','ecommerce','item'] },
+  team:         { cats:['cards'], keywords:['team','people','staff','member','profile'] },
+  animation:    { cats:['animation','backgrounds'], keywords:['loader','animate','motion','gsap'] },
+  navigation:   { cats:['navigation'], keywords:['nav','menu','header','sidebar'] },
+};
+
+function toggleBuildMode() {
+  buildModeActive = !buildModeActive;
+  document.getElementById('buildModeBtn').style.background      = buildModeActive ? 'var(--gd1)' : '';
+  document.getElementById('buildModeBar').classList.toggle('active', buildModeActive);
+  document.getElementById('buildWorkspace').classList.toggle('active', buildModeActive);
+  document.getElementById('sidebar').style.display              = buildModeActive ? 'none' : '';
+  document.getElementById('buildFilterBar').classList.toggle('active', buildModeActive);
+
+  if (buildModeActive) {
+    showToast('Build Mode — Select a client type to start');
+    updateBuildSections();
+  } else {
+    // Reset
+    buildProject.activeSection = null;
+    render(); // Normal render
+  }
+}
+
+function updateBuildSections() {
+  const ct = document.getElementById('bwClientType').value;
+  buildProject.clientType = ct;
+  buildProject.businessName = document.getElementById('bwBusinessName').value;
+
+  const sectionList = CLIENT_SECTIONS[ct] || CLIENT_SECTIONS.default;
+
+  // Init sections
+  buildProject.sections = {};
+  sectionList.forEach(s => {
+    buildProject.sections[s] = buildProject.sections[s] || { included: true, component: null };
+  });
+
+  // Set first section as active
+  if (!buildProject.activeSection || !buildProject.sections[buildProject.activeSection]) {
+    buildProject.activeSection = sectionList[0] || 'hero';
+  }
+
+  // Update sidebar section list
+  const container = document.getElementById('bwSectionList');
+  container.innerHTML = sectionList.map(s => {
+    const comp = buildProject.sections[s]?.component;
+    const isActive = s === buildProject.activeSection;
+    const isDone = !!comp;
+    return \`<div class="bw-section-item \${isActive?'bsi-active':isDone?'bsi-done':''}" onclick="setActiveSection('\${s}')">
+      <div class="bsi-status \${isDone?'done':isActive?'active':''}">
+        \${isDone ? '✓' : isActive ? '→' : ''}
+      </div>
+      <div class="bsi-name">\${SECTION_LABELS[s] || s}</div>
+      \${comp ? \`<div class="bsi-comp">\${comp.name.slice(0,15)}…</div>\` : ''}
+    </div>\`;
+  }).join('');
+
+  // Update top bar
+  document.getElementById('bmClientLabel').textContent = ct ? (ct.charAt(0).toUpperCase()+ct.slice(1)+' Site') : 'Select a client type →';
+
+  // Update pills
+  const pills = document.getElementById('bmSectionPills');
+  pills.innerHTML = sectionList.map(s => {
+    const isDone = !!buildProject.sections[s]?.component;
+    return \`<div class="bm-section-pill \${s===buildProject.activeSection?'active-section':''}" onclick="setActiveSection('\${s}')" style="\${isDone?'background:var(--green)22;border-color:var(--green);color:var(--green)':''}">
+      \${isDone?'✓ ':'}\${SECTION_LABELS[s]||s}
+    </div>\`;
+  }).join('');
+
+  // Check if generate is ready
+  const filledCount = Object.values(buildProject.sections).filter(s=>s.component).length;
+  document.getElementById('bmGenerateBtn').disabled = filledCount < 2;
+
+  // Filter main grid
+  setActiveSection(buildProject.activeSection);
+}
+
+function setActiveSection(section) {
+  buildProject.activeSection = section;
+
+  // Update filter bar
+  const filterBar = document.getElementById('buildFilterBar');
+  const filter = SECTION_FILTERS[section] || SECTION_FILTERS.hero;
+  filterBar.innerHTML = \`🔍 Showing components for <strong>\${SECTION_LABELS[section]||section}</strong> section · \${filter.cats.join(', ')} · keywords: \${filter.keywords.slice(0,4).join(', ')}\`;
+
+  // Re-render with build mode active
+  renderBuildMode(section);
+  updateBuildSections();
+}
+
+function renderBuildMode(section) {
+  const filter = SECTION_FILTERS[section] || SECTION_FILTERS.hero;
+  const selectedComp = buildProject.sections[section]?.component;
+
+  let filtered = allComps.filter(c => {
+    const catOk = filter.cats.includes(c.category);
+    const kwOk  = filter.keywords.some(kw =>
+      c.name.toLowerCase().includes(kw) ||
+      (c.desc||'').toLowerCase().includes(kw) ||
+      (c.tags||[]).some(t=>t.toLowerCase().includes(kw))
+    );
+    return catOk || kwOk;
+  });
+
+  // If search query active, also apply it
+  if (searchQ) {
+    const q = searchQ.toLowerCase();
+    filtered = filtered.filter(c =>
+      c.name.toLowerCase().includes(q) || (c.tags||[]).some(t=>t.toLowerCase().includes(q))
+    );
+  }
+
+  document.getElementById('count-display').textContent = filtered.length + ' components for ' + (SECTION_LABELS[section]||section);
+
+  const grid = document.getElementById('grid');
+  if (!filtered.length) {
+    grid.innerHTML = \`<div class="empty"><div class="empty-icon">◻</div><div>No matching components — try browsing All</div></div>\`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(c => {
+    const isSelected = selectedComp && selectedComp.id === c.id;
+    return \`<div class="c-card \${isSelected?'build-selected':''}">
+      <div class="c-preview" onclick="openCode('\${c.id}')">
+        <iframe srcdoc="\${esc(c.code)}" sandbox="allow-scripts" loading="lazy"></iframe>
+        <div class="c-source-badge">\${c.source||''}</div>
+        <div class="c-preview-overlay">
+          <button class="c-overlay-btn c-add-btn" onclick="event.stopPropagation();selectForSection('\${c.id}')">
+            \${isSelected ? '✓ Selected' : '+ Use for \${SECTION_LABELS[section]||section}'}
+          </button>
+          <button class="c-overlay-btn" onclick="openCode('\${c.id}')">Code</button>
+        </div>
+      </div>
+      <div class="c-foot">
+        <div class="c-name">\${c.name}</div>
+        \${stackBadge(c)}
+        <button class="c-code-btn" onclick="openCode('\${c.id}')">&lt;/&gt;</button>
+      </div>
+    </div>\`;
+  }).join('');
+}
+
+function selectForSection(compId) {
+  const c = allComps.find(x => x.id === compId);
+  if (!c || !buildProject.activeSection) return;
+
+  buildProject.sections[buildProject.activeSection] = {
+    included: true,
+    component: c,
+  };
+
+  showToast(\`✓ \${c.name} selected for \${SECTION_LABELS[buildProject.activeSection]} section\`);
+
+  // Auto-advance to next empty section
+  const sectionList = CLIENT_SECTIONS[buildProject.clientType] || CLIENT_SECTIONS.default;
+  const currentIdx = sectionList.indexOf(buildProject.activeSection);
+  const nextEmpty = sectionList.slice(currentIdx + 1).find(s => !buildProject.sections[s]?.component);
+  if (nextEmpty) {
+    setTimeout(() => setActiveSection(nextEmpty), 300);
+  } else {
+    updateBuildSections();
+    renderBuildMode(buildProject.activeSection);
+  }
+}
+
+function setBuildColor(type, value) {
+  buildProject[type === 'primary' ? 'primaryColor' : 'secondaryColor'] = value;
+  document.getElementById('bw'+type.charAt(0).toUpperCase()+type.slice(1)+'Swatch').style.background = value;
+  document.getElementById('bw'+type.charAt(0).toUpperCase()+type.slice(1)+'Hex').value = value;
+}
+
+function setBuildColorHex(type, value) {
+  if (/^#[0-9a-f]{6}$/i.test(value)) setBuildColor(type, value);
+}
+
+// ── GENERATE SITE FROM BUILD ───────────────────────────────────────────────────
+function generateFromBuild() {
+  const { businessName, clientType, primaryColor, secondaryColor, sections } = buildProject;
+
+  const includedSections = Object.entries(sections)
+    .filter(([,v]) => v.included && v.component)
+    .map(([key, val]) => ({ key, component: val.component }));
+
+  if (includedSections.length < 2) {
+    showToast('Select at least 2 sections first', true);
+    return;
+  }
+
+  const name = businessName || 'My Site';
+  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+  // Build the assembled HTML
+  const sectionsHTML = includedSections.map(({ key, component }) => {
+    // Extract just the body content from each component's standalone HTML
+    const bodyMatch = component.code.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+    const bodyContent = bodyMatch ? bodyMatch[1].trim() : component.code;
+
+    // Extract styles from each component
+    const styleMatch = component.code.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
+    const styles = styleMatch ? styleMatch[1].trim() : '';
+
+    // Extract scripts
+    const scriptMatches = [...component.code.matchAll(/<script(?![^>]*src)[^>]*>([\s\S]*?)<\/script>/gi)];
+    const scripts = scriptMatches.map(m => m[1].trim()).filter(Boolean).join('
+');
+
+    return { key, bodyContent, styles, scripts, name: component.name };
+  });
+
+  const allStyles  = sectionsHTML.map(s => \`/* \${s.name} */
+\${s.styles}\`).join('
+
+');
+  const allScripts = sectionsHTML.map(s => s.scripts).filter(Boolean).join('
+
+');
+  const allBody    = sectionsHTML.map(s =>
+    \`<!-- \${SECTION_LABELS[s.key]||s.key}: \${s.name} -->
+<section id="\${s.key}" style="position:relative">\${s.bodyContent}</section>\`
+  ).join('
+
+');
+
+  const nav = \`<nav style="position:fixed;top:0;left:0;right:0;z-index:100;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(0,0,0,.9);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.07)">
+    <a href="#" style="font-weight:800;font-size:1rem;color:#fff;text-decoration:none;letter-spacing:-.5px">\${name}</a>
+    <div style="display:flex;gap:20px">
+      \${Object.keys(sections).filter(s=>!['footer'].includes(s)).slice(0,5).map(s=>
+        \`<a href="#\${s}" style="font-size:.82rem;color:rgba(255,255,255,.5);text-decoration:none;transition:.15s" onmouseover="this.style.color='white'" onmouseout="this.style.color='rgba(255,255,255,.5)'">\${SECTION_LABELS[s]||s}</a>\`
+      ).join('')}
+    </div>
+  </nav>\`;
+
+  const fullPage = \`<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>\${name}</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: \${primaryColor};
+  --secondary: \${secondaryColor};
+  --gold: \${primaryColor};
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', sans-serif; background: #060606; color: #ccc; margin-top: 60px; }
+section { position: relative; }
+\${allStyles}
+</style>
+</head>
+<body>
+\${nav}
+\${allBody}
+<footer style="background:#030303;padding:40px 24px;text-align:center;color:rgba(255,255,255,.3);font-size:.8rem">
+  © \${new Date().getFullYear()} \${name} · Built by <a href="https://2twofargo.github.io/fargo-design-library" style="color:\${primaryColor}">Fargo</a>
+</footer>
+\${allScripts ? \`<script>\${allScripts}<\/script>\` : ''}
+</body>
+</html>\`;
+
+  // Download
+  const blob = new Blob([fullPage], { type: 'text/html' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = slug + '-website.html';
+  a.click();
+
+  showToast(\`✓ \${name} generated (\${includedSections.length} sections)\`);
+}
+
+function updateBuildPreview() {
+  buildProject.businessName = document.getElementById('bwBusinessName').value;
+}
+
+// Override render to use build mode when active
+const originalRender = render;
+function render() {
+  if (buildModeActive && buildProject.activeSection) {
+    renderBuildMode(buildProject.activeSection);
+  } else {
+    originalRender();
+  }
+}
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 async function init() {
