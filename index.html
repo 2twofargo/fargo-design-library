@@ -257,9 +257,10 @@ img{max-width:100%;display:block}
 }
 .c-card:hover{border-color:rgba(255,255,255,.12);transform:translateY(-1px);box-shadow:0 10px 40px -12px rgba(0,0,0,.8)}
 .c-card.selected{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
-.c-preview{position:relative;height:200px;overflow:hidden;background:#0b0b0b}
+.c-preview{position:relative;height:210px;overflow:hidden;background:#0b0b0b;cursor:pointer}
 .c-preview iframe{width:100%;height:100%;border:none;pointer-events:none;background:#0b0b0b}
-.c-preview-ph{width:100%;height:100%;background:#0b0b0b;display:flex;align-items:center;justify-content:center}
+.c-preview-ph{width:100%;height:100%;background:#0b0b0b;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.c-preview-ph::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.02),transparent);animation:shimmer 2s infinite}
 .c-src-badge{
   position:absolute;top:8px;left:8px;
   background:rgba(0,0,0,.65);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(8px);
@@ -586,7 +587,10 @@ img{max-width:100%;display:block}
 
     <!-- ── BUILD WORKSPACE ──────────────────────────────────────────────── -->
     <div id="build-workspace">
-      <div class="bw-head"><div class="bw-head-label">⚡ Build Workspace</div></div>
+      <div class="bw-head">
+        <div class="bw-head-label">⚡ Build Workspace</div>
+        <div style="font-size:10px;color:var(--fg4);margin-top:3px;line-height:1.5">Set your project info, then click each section to pick the right component. Click cards for full preview.</div>
+      </div>
       <div class="bw-body scroll">
         <div class="bw-field">
           <label>Business Name</label>
@@ -815,13 +819,55 @@ const STACK_META = {
 };
 const VIEW_SIZES = { sm:220, md:280, lg:360 };
 const CLIENT_SECTIONS = {
-  'Artist':           [{id:'hero',label:'Hero',cats:['backgrounds','layouts','text']},{id:'music',label:'Music',cats:['galleries','animation','cards']},{id:'gallery',label:'Gallery',cats:['galleries','cards']},{id:'about',label:'About',cats:['cards','text','layouts']},{id:'contact',label:'Contact',cats:['forms','buttons','layouts']}],
-  'Nonprofit':        [{id:'hero',label:'Hero',cats:['backgrounds','layouts','text']},{id:'impact',label:'Impact',cats:['cards','layouts','animation']},{id:'donate',label:'Donate',cats:['buttons','forms','cards']},{id:'events',label:'Events',cats:['layouts','cards']},{id:'contact',label:'Contact',cats:['forms','buttons','layouts']}],
-  'Restaurant':       [{id:'hero',label:'Hero',cats:['backgrounds','layouts','text']},{id:'menu',label:'Menu',cats:['layouts','cards','forms']},{id:'gallery',label:'Gallery',cats:['galleries','cards']},{id:'about',label:'About',cats:['cards','text','layouts']},{id:'contact',label:'Contact',cats:['forms','buttons','layouts']}],
-  'Service Business': [{id:'hero',label:'Hero',cats:['backgrounds','layouts','text']},{id:'services',label:'Services',cats:['cards','layouts']},{id:'process',label:'Process',cats:['layouts','animation','cards']},{id:'testimonials',label:'Testimonials',cats:['cards']},{id:'contact',label:'Contact',cats:['forms','buttons','layouts']}],
-  'E-Commerce':       [{id:'hero',label:'Hero',cats:['backgrounds','layouts','text']},{id:'products',label:'Products',cats:['cards','galleries']},{id:'about',label:'About',cats:['cards','text','layouts']},{id:'reviews',label:'Reviews',cats:['cards']},{id:'contact',label:'Contact',cats:['forms','buttons','layouts']}],
-  'Music / Events':   [{id:'hero',label:'Hero',cats:['backgrounds','layouts','text']},{id:'events',label:'Events',cats:['layouts','cards']},{id:'gallery',label:'Gallery',cats:['galleries','cards']},{id:'about',label:'About',cats:['cards','text','layouts']},{id:'contact',label:'Contact',cats:['forms','buttons','layouts']}],
-  'Corporate':        [{id:'hero',label:'Hero',cats:['backgrounds','layouts','text']},{id:'services',label:'Services',cats:['cards','layouts']},{id:'team',label:'Team',cats:['cards']},{id:'testimonials',label:'Testimonials',cats:['cards']},{id:'contact',label:'Contact',cats:['forms','buttons','layouts']}],
+  'Artist': [
+    {id:'hero',        label:'Hero',         cats:['backgrounds','layouts','text'],    keywords:['hero','landing','banner','gradient','particle','wave','aurora','glow','dark','background','animated']},
+    {id:'music',       label:'Music',        cats:['galleries','animation','cards'],   keywords:['music','audio','player','album','track','song','playlist','vinyl','equalizer']},
+    {id:'gallery',     label:'Gallery',      cats:['galleries','cards'],               keywords:['gallery','image','photo','grid','portfolio','masonry','lightbox','hover','expand','slider']},
+    {id:'about',       label:'About',        cats:['cards','text','layouts'],          keywords:['about','bio','profile','story','team','card','glass']},
+    {id:'contact',     label:'Contact',      cats:['forms','buttons','layouts'],       keywords:['contact','form','email','input','submit','message','cta']},
+  ],
+  'Nonprofit': [
+    {id:'hero',        label:'Hero',         cats:['backgrounds','layouts','text'],    keywords:['hero','landing','banner','gradient','particle','wave']},
+    {id:'impact',      label:'Impact Stats', cats:['cards','layouts','animation'],     keywords:['stat','counter','number','impact','metric','progress','count','badge']},
+    {id:'donate',      label:'Donate',       cats:['buttons','forms','cards'],         keywords:['donate','button','cta','action','fund','submit','click']},
+    {id:'events',      label:'Events',       cats:['layouts','cards'],                 keywords:['event','date','calendar','card','list','timeline','schedule']},
+    {id:'contact',     label:'Contact',      cats:['forms','buttons','layouts'],       keywords:['contact','form','email','input','submit','message']},
+  ],
+  'Restaurant': [
+    {id:'hero',        label:'Hero',         cats:['backgrounds','layouts','text'],    keywords:['hero','landing','banner','gradient','dark','full','image','overlay']},
+    {id:'menu',        label:'Menu',         cats:['layouts','cards','forms'],         keywords:['card','list','grid','table','tab','price','item','badge']},
+    {id:'gallery',     label:'Gallery',      cats:['galleries','cards'],               keywords:['gallery','image','photo','grid','hover','lightbox','masonry']},
+    {id:'about',       label:'About',        cats:['cards','text','layouts'],          keywords:['about','story','card','glass','profile','team']},
+    {id:'contact',     label:'Contact',      cats:['forms','buttons','layouts'],       keywords:['contact','form','email','input','submit','map','reservation']},
+  ],
+  'Service Business': [
+    {id:'hero',        label:'Hero',         cats:['backgrounds','layouts','text'],    keywords:['hero','landing','banner','gradient','dark','full','animated']},
+    {id:'services',    label:'Services',     cats:['cards','layouts'],                 keywords:['card','service','feature','icon','grid','hover','glass','bento']},
+    {id:'process',     label:'Process',      cats:['layouts','animation','cards'],     keywords:['step','process','timeline','flow','number','list','progress']},
+    {id:'testimonials',label:'Testimonials', cats:['cards'],                           keywords:['testimonial','review','quote','star','rating','profile','glass']},
+    {id:'contact',     label:'Contact',      cats:['forms','buttons','layouts'],       keywords:['contact','form','email','input','submit','message','cta']},
+  ],
+  'E-Commerce': [
+    {id:'hero',        label:'Hero',         cats:['backgrounds','layouts','text'],    keywords:['hero','landing','banner','gradient','full','animated']},
+    {id:'products',    label:'Products',     cats:['cards','galleries'],               keywords:['card','product','shop','grid','hover','image','gallery','price']},
+    {id:'about',       label:'About',        cats:['cards','text','layouts'],          keywords:['about','story','card','glass','feature','brand']},
+    {id:'reviews',     label:'Reviews',      cats:['cards'],                           keywords:['review','star','rating','quote','testimonial','profile']},
+    {id:'contact',     label:'Contact',      cats:['forms','buttons','layouts'],       keywords:['contact','form','email','input','submit','cta','button']},
+  ],
+  'Music / Events': [
+    {id:'hero',        label:'Hero',         cats:['backgrounds','layouts','text'],    keywords:['hero','landing','banner','gradient','dark','particle','animated','glow']},
+    {id:'events',      label:'Events',       cats:['layouts','cards'],                 keywords:['event','date','card','list','ticket','timeline','schedule','badge']},
+    {id:'gallery',     label:'Gallery',      cats:['galleries','cards'],               keywords:['gallery','image','photo','grid','hover','lightbox','slider']},
+    {id:'about',       label:'About',        cats:['cards','text','layouts'],          keywords:['about','story','card','glass','profile','bio']},
+    {id:'contact',     label:'Contact',      cats:['forms','buttons','layouts'],       keywords:['contact','form','email','input','submit','booking','cta']},
+  ],
+  'Corporate': [
+    {id:'hero',        label:'Hero',         cats:['backgrounds','layouts','text'],    keywords:['hero','landing','banner','gradient','dark','full','animated']},
+    {id:'services',    label:'Services',     cats:['cards','layouts'],                 keywords:['card','service','feature','icon','grid','hover','bento','glass']},
+    {id:'team',        label:'Team',         cats:['cards'],                           keywords:['team','profile','member','card','avatar','photo','people','grid']},
+    {id:'testimonials',label:'Testimonials', cats:['cards'],                           keywords:['testimonial','review','quote','star','rating','profile']},
+    {id:'contact',     label:'Contact',      cats:['forms','buttons','layouts'],       keywords:['contact','form','email','input','submit','message','cta']},
+  ],
 };
 const NL_MAPPINGS = [
   {phrases:['hero','landing','banner'],cats:['backgrounds','layouts','text']},
@@ -956,6 +1002,23 @@ function normalizeComp(it, i) {
 }
 
 // ── FILTERING ─────────────────────────────────────────────────────────────────
+function scoreForSection(comp, section) {
+  let score = 0;
+  const name = comp.name.toLowerCase();
+  const tags = (comp.tags||[]).join(' ').toLowerCase();
+  const combined = name + ' ' + tags;
+  // Keyword matches
+  if (section.keywords) {
+    section.keywords.forEach(kw => { if (combined.includes(kw)) score += 2; });
+  }
+  // Section-tagged components get big boost
+  if (comp.isSection || comp.sectionType === section.id) score += 10;
+  // Penalise clearly wrong components (utility CSS, tiny demos)
+  const skipWords = ['aspect ratio','box-sizing','reset','clip','scroll snap','multiline','prefix','isometric','project structure','incorrect token','monthly balance'];
+  if (skipWords.some(w => name.includes(w))) score -= 5;
+  return score;
+}
+
 function getFiltered() {
   let list = allComps;
 
@@ -963,7 +1026,17 @@ function getFiltered() {
     const sections = CLIENT_SECTIONS[build.clientType] || CLIENT_SECTIONS['Artist'];
     const activeSection = sections.find(s => s.id === build.activeSection);
     if (activeSection) {
-      list = list.filter(c => activeSection.cats.includes(c.category));
+      // Filter by category
+      let catList = list.filter(c => activeSection.cats.includes(c.category));
+
+      // Score and sort by relevance
+      catList = catList.map(c => ({ ...c, _score: scoreForSection(c, activeSection) }))
+                       .filter(c => c._score >= 0)
+                       .sort((a, b) => b._score - a._score);
+
+      // If we have keyword-matching results, prefer them
+      const kwMatches = catList.filter(c => c._score > 0);
+      list = kwMatches.length >= 6 ? kwMatches : catList;
     }
   } else if (activeFilter.kind === 'cat' && activeFilter.value !== 'all') {
     list = list.filter(c => c.category === activeFilter.value);
@@ -975,7 +1048,6 @@ function getFiltered() {
 
   const q = searchQuery.trim().toLowerCase();
   if (q) {
-    // Natural language search
     const nlMatch = NL_MAPPINGS.find(m => m.phrases.some(p => q.includes(p)));
     if (nlMatch) {
       list = list.filter(c =>
@@ -992,8 +1064,10 @@ function getFiltered() {
     }
   }
 
-  if (sortOrder === 'name') list = [...list].sort((a,b) => a.name.localeCompare(b.name));
-  else if (sortOrder === 'source') list = [...list].sort((a,b) => a.source.localeCompare(b.source));
+  if (!buildModeActive) {
+    if (sortOrder === 'name') list = [...list].sort((a,b) => a.name.localeCompare(b.name));
+    else if (sortOrder === 'source') list = [...list].sort((a,b) => a.source.localeCompare(b.source));
+  }
   return list;
 }
 
@@ -1008,7 +1082,17 @@ function render() {
   updateCountDisplay(filtered.length);
 
   if (filtered.length === 0) {
-    grid.style.display = 'none'; empty.style.display = 'flex'; return;
+    grid.style.display = 'none';
+    empty.style.display = 'flex';
+    if (buildModeActive) {
+      const sections = CLIENT_SECTIONS[build.clientType]||CLIENT_SECTIONS['Artist'];
+      const sec = sections.find(s=>s.id===build.activeSection);
+      document.getElementById('empty-state').innerHTML = `
+        <div class="empty-icon">◻</div>
+        <div class="empty-title">No matching components for ${sec?sec.label:'this section'}</div>
+        <div class="empty-sub">Try browsing All components and use the search bar to find what you need, then click "Use for ${sec?sec.label:'Section'}".</div>`;
+    }
+    return;
   }
   empty.style.display = 'none'; grid.style.display = 'grid';
 
@@ -1045,7 +1129,7 @@ function buildCard(c, i) {
       </div>
     </div>
     <div class="c-foot">
-      <span class="c-name">${esc(c.name)}</span>
+      <span class="c-name" title="${esc(c.name)}">${esc(c.name)}</span>
       <span class="c-stack-badge" style="border-color:${sm.border}55;color:${sm.text}">${esc(c.stack)}</span>
       <button class="c-code-btn" onclick="event.stopPropagation();openCode('${esc(c.id)}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></button>
     </div>
@@ -1276,7 +1360,11 @@ function updateBuildUI() {
   // Build filter bar
   const activeSection = sections.find(s => s.id === build.activeSection);
   if (activeSection) {
-    document.getElementById('build-filter-bar').innerHTML = `🔍 Showing components for <strong>${activeSection.label}</strong> · ${activeSection.cats.join(', ')}`;
+    const kws = activeSection.keywords ? activeSection.keywords.slice(0,5).join(', ') : '';
+    document.getElementById('build-filter-bar').innerHTML =
+      `🔍 Pick a <strong>${activeSection.label}</strong> component for your ${build.clientType||'site'} — sorted by relevance` +
+      (kws ? ` · keywords: <em style="color:var(--fg4)">${kws}…</em>` : '') +
+      ` · <span style="color:var(--fg4)">Click any card to open full interactive preview</span>`;
   }
 
   // Generate button
