@@ -944,7 +944,7 @@ function setView(v) {
   event.currentTarget.classList.add('active');
 }
 
-function filterComponents() { searchQ = document.getElementById('search').value; render(); }
+function filterComponents() { searchQ = document.getElementById('search').value; renderComponents(); }
 
 function setSidebarMode(mode) {
   sidebarMode = mode;
@@ -1481,30 +1481,49 @@ function updateBuildPreview() {
   buildProject.businessName = document.getElementById('bwBusinessName').value;
 }
 
-// Override render to use build mode when active
-const originalRender = render;
-function render() {
+// Build-aware render — avoids hoisting conflict by using separate function
+function renderComponents() {
   if (buildModeActive && buildProject.activeSection) {
     renderBuildMode(buildProject.activeSection);
   } else {
-    originalRender();
+    render();
   }
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 async function init() {
   loadPersisted();
-  if(GH.configured()){
-    setSyncStatus('busy','Loading from GitHub...');
-    const ghComps=await loadFromGitHub();
-    if(ghComps&&ghComps.length>0){
-      const builtInIds=new Set(BUILT_IN.map(c=>c.id));
-      custom=ghComps.filter(c=>!builtInIds.has(c.id));
-      savePersisted();allComps=[...BUILT_IN,...custom];
-      setSyncStatus('ok',`Loaded ${ghComps.length} from GitHub`);
-    } else {setSyncStatus('ok','Connected');}
+
+  // Always try public raw URL first — no token needed for public repos
+  const PUBLIC_URL = 'https://raw.githubusercontent.com/2twofargo/fargo-design-library/main/fargo-library.json';
+  try {
+    setSyncStatus('busy', 'Loading library...');
+    document.getElementById('count-display').textContent = 'Loading…';
+    const res = await fetch(PUBLIC_URL + '?t=' + Date.now());
+    if (res.ok) {
+      const data = await res.json();
+      const ghComps = data.components || [];
+      if (ghComps.length > 0) {
+        const builtInIds = new Set(BUILT_IN.map(c => c.id));
+        custom = ghComps.filter(c => !builtInIds.has(c.id));
+        savePersisted();
+        allComps = [...BUILT_IN, ...custom];
+        setSyncStatus('ok', ghComps.length + ' components');
+        document.getElementById('syncDot').style.display  = 'block';
+        document.getElementById('syncLabel').style.display = 'block';
+      }
+    }
+  } catch(e) {
+    console.warn('Public load failed:', e.message);
   }
-  updateCounts();render();
+
+  // Also connect write access if token is configured
+  if (GH.configured()) {
+    document.getElementById('syncBtn').style.display = 'flex';
+  }
+
+  updateCounts();
+  renderComponents();
 }
 init();
 </script>
