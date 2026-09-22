@@ -2,1529 +2,1561 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Fargo — Design Library</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+/* ── DESIGN TOKENS ─────────────────────────────────────────────────────────── */
 :root{
-  --bg:#060606;--panel:#0d0d0d;--surface:#121212;--card:#111;
-  --b1:#1a1a1a;--b2:#222;--b3:#2e2e2e;
-  --t0:#fff;--t1:#ccc;--t2:#888;--t3:#555;--t4:#333;
-  --gold:#c9a84c;--gd1:rgba(201,168,76,.06);--gd2:rgba(201,168,76,.18);--gd3:rgba(201,168,76,.35);
-  --blue:#3b82f6;--green:#22c55e;--purple:#a855f7;--red:#ef4444;--cyan:#06b6d4;--pink:#ec4899;
-  --sidebar:220px;
+  --bg:#060606;--panel:#0d0d0d;--surface:#121212;--muted:#161616;
+  --fg:#ffffff;--fg2:#cccccc;--fg3:#888888;--fg4:#555555;
+  --border:#1a1a1a;--border2:#242424;
+  --gold:#c9a84c;--gold-soft:rgba(201,168,76,.1);--gold-dim:rgba(201,168,76,.3);
+  --green:#22c55e;--red:#ef4444;
+  --r:8px;--r-lg:14px;--r-xl:18px;
 }
-html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);-webkit-font-smoothing:antialiased;overflow:hidden}
-button,input,select,textarea{font-family:'Inter',sans-serif}
-button{cursor:pointer;border:none;background:none}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;min-width:0}
+html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--fg2);-webkit-font-smoothing:antialiased}
+::selection{background:var(--gold);color:#000}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{font-family:inherit;color:inherit}
+img{max-width:100%;display:block}
 
-/* ── APP SHELL ─────────────────────────────────────── */
-.app{height:100vh;display:grid;grid-template-rows:56px 1fr;overflow:hidden}
+/* ── TYPOGRAPHY ────────────────────────────────────────────────────────────── */
+.font-head{font-family:'Space Grotesk',system-ui,sans-serif}
+.font-mono{font-family:'JetBrains Mono',monospace}
 
-/* ── TOPBAR ─────────────────────────────────────────── */
-.topbar{
-  display:flex;align-items:center;gap:12px;padding:0 20px;
-  border-bottom:1px solid var(--b1);
-  background:rgba(6,6,6,.95);backdrop-filter:blur(16px);
-  position:relative;z-index:60;
+/* ── SCROLLBAR ─────────────────────────────────────────────────────────────── */
+.scroll{overflow-y:auto;scrollbar-width:thin;scrollbar-color:#2a2a2a transparent}
+.scroll::-webkit-scrollbar{width:6px}
+.scroll::-webkit-scrollbar-thumb{background:#242424;border-radius:99px}
+.scroll::-webkit-scrollbar-track{background:transparent}
+
+/* ── FARGO AURA BACKGROUND ─────────────────────────────────────────────────── */
+.fargo-aura{
+  background:
+    radial-gradient(900px 500px at 78% -8%,rgba(201,168,76,.08),transparent 60%),
+    radial-gradient(700px 600px at 0% 120%,rgba(201,168,76,.04),transparent 55%),
+    var(--bg);
 }
-
-.tb-brand{display:flex;align-items:center;gap:10px;flex-shrink:0}
-.tb-logo{
-  font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:16px;
-  color:var(--gold);letter-spacing:-.5px;
-}
-.tb-tag{
-  font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--t3);
-  border:1px solid var(--b2);padding:2px 7px;
-}
-
-.tb-search-wrap{
-  flex:1;max-width:400px;position:relative;margin:0 16px;
-}
-.tb-search{
-  width:100%;background:var(--surface);border:1px solid var(--b2);
-  padding:8px 14px 8px 36px;font-size:12px;color:var(--t1);outline:none;
-  transition:.15s;
-}
-.tb-search:focus{border-color:var(--gd2);background:var(--panel)}
-.tb-search::placeholder{color:var(--t4)}
-.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:13px;pointer-events:none}
-
-.tb-filters{display:flex;gap:4px;align-items:center;margin-left:8px}
-.stack-btn{
-  padding:5px 11px;font-size:11px;font-weight:500;color:var(--t3);
-  border:1px solid var(--b2);transition:.12s;white-space:nowrap;
-}
-.stack-btn:hover{color:var(--t1);border-color:var(--b3)}
-.stack-btn.active{color:var(--gold);border-color:var(--gd2);background:var(--gd1)}
-
-.tb-right{display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0}
-.sync-dot{width:6px;height:6px;border-radius:50%;background:var(--t4);flex-shrink:0}
-.sync-dot.ok{background:var(--green);box-shadow:0 0 6px rgba(34,197,94,.5)}
-.sync-dot.busy{background:var(--gold);animation:blink 1s infinite}
-.sync-dot.err{background:var(--red)}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.sync-label{font-size:10px;color:var(--t3);font-family:'JetBrains Mono',monospace;white-space:nowrap}
-
-.tb-btn{
-  display:flex;align-items:center;gap:5px;padding:6px 13px;
-  font-size:11px;font-weight:600;border:1px solid var(--b2);
-  color:var(--t2);transition:.12s;white-space:nowrap;
-}
-.tb-btn:hover{color:var(--t0);border-color:var(--b3)}
-.tb-btn.gold{background:var(--gold);color:#000;border-color:var(--gold)}
-.tb-btn.gold:hover{background:#d4ae58;border-color:#d4ae58}
-
-/* ── BODY ────────────────────────────────────────────── */
-.body{display:grid;grid-template-columns:var(--sidebar) 1fr;overflow:hidden}
-
-/* ── SIDEBAR ─────────────────────────────────────────── */
-.sidebar{
-  border-right:1px solid var(--b1);
-  display:flex;flex-direction:column;
-  overflow:hidden;background:var(--panel);
+.fargo-grid{
+  background-image:
+    linear-gradient(to right,rgba(255,255,255,.018) 1px,transparent 1px),
+    linear-gradient(to bottom,rgba(255,255,255,.018) 1px,transparent 1px);
+  background-size:40px 40px;
 }
 
-.sb-mode{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--b1)}
-.sb-mode-btn{
-  padding:9px;font-size:10px;font-weight:600;letter-spacing:.5px;
-  text-transform:uppercase;color:var(--t3);border:none;background:none;
-  transition:.12s;
+/* ── ANIMATIONS ────────────────────────────────────────────────────────────── */
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.animate-rise{animation:rise .45s cubic-bezier(.22,1,.36,1) both}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.3}}
+.animate-pulse{animation:pulse-dot 2s ease-in-out infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.animate-spin{animation:spin .8s linear infinite}
+
+/* ── APP SHELL ─────────────────────────────────────────────────────────────── */
+#app{display:flex;flex-direction:column;height:100vh;overflow:hidden}
+#header{
+  display:flex;align-items:center;gap:12px;height:56px;padding:0 16px;
+  flex-shrink:0;border-bottom:1px solid var(--border);
+  background:rgba(13,13,13,.85);backdrop-filter:blur(20px);
+  position:relative;z-index:50;
 }
-.sb-mode-btn.active{color:var(--gold);background:var(--gd1)}
-.sb-mode-btn:hover:not(.active){color:var(--t1)}
-
-.sb-scroll{flex:1;overflow-y:auto;padding:8px 0}
-.sb-scroll::-webkit-scrollbar{width:3px}
-.sb-scroll::-webkit-scrollbar-track{background:transparent}
-.sb-scroll::-webkit-scrollbar-thumb{background:var(--b2)}
-
-.sb-section-label{
-  font-size:8.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
-  color:var(--t4);padding:10px 14px 5px;
+#body{display:flex;flex:1;overflow:hidden;position:relative}
+#sidebar{
+  width:220px;flex-shrink:0;display:flex;flex-direction:column;
+  border-right:1px solid var(--border);background:rgba(13,13,13,.6);
+  transition:transform .2s;
 }
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+#toolbar{
+  display:flex;align-items:center;gap:10px;height:44px;padding:0 16px;
+  flex-shrink:0;border-bottom:1px solid var(--border);
+}
+#grid-wrap{flex:1;overflow-y:auto;padding:16px;scrollbar-width:thin;scrollbar-color:#242424 transparent}
+#grid-wrap::-webkit-scrollbar{width:6px}
+#grid-wrap::-webkit-scrollbar-thumb{background:#242424;border-radius:99px}
 
+/* ── HEADER ELEMENTS ───────────────────────────────────────────────────────── */
+.h-brand{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.h-brand-logo{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--gold);letter-spacing:-.5px}
+.h-brand-tag{font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--fg4);border:1px solid var(--border2);padding:2px 7px;border-radius:3px}
+.h-search{position:relative;flex:1;max-width:400px;margin:0 auto}
+.h-search input{
+  width:100%;height:36px;padding:0 12px 0 36px;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  font-size:13px;color:var(--fg);outline:none;transition:border-color .15s;
+}
+.h-search input::placeholder{color:var(--fg4)}
+.h-search input:focus{border-color:var(--gold-dim)}
+.h-search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--fg4);pointer-events:none;width:14px;height:14px}
+.h-stack-pills{display:flex;align-items:center;gap:2px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:3px}
+.h-stack-pill{padding:4px 10px;border-radius:5px;font-size:11px;font-weight:500;color:var(--fg3);transition:.12s}
+.h-stack-pill:hover{color:var(--fg)}
+.h-stack-pill.active{background:var(--gold);color:#000}
+.h-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
+.h-sync{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--fg4)}
+.h-sync-dot{width:7px;height:7px;border-radius:50%;background:var(--fg4)}
+.h-sync-dot.synced{background:var(--green)}
+.h-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:var(--r);font-size:11px;font-weight:500;color:var(--fg3);transition:.12s;white-space:nowrap}
+.h-btn:hover{background:var(--surface);color:var(--fg)}
+.h-btn-build{border:1px solid var(--gold-dim);color:var(--gold)}
+.h-btn-build:hover{background:var(--gold-soft)}
+.h-btn-build.active{background:var(--gold);color:#000;border-color:var(--gold)}
+.h-btn-add{background:var(--gold);color:#000;font-weight:700}
+.h-btn-add:hover{background:#d4ae58;transform:translateY(-1px)}
+.h-icon-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:var(--r);color:var(--fg3);transition:.12s}
+.h-icon-btn:hover{background:var(--surface);color:var(--fg)}
+
+/* ── BUILD MODE BAR ────────────────────────────────────────────────────────── */
+#build-bar{
+  display:none;align-items:center;gap:10px;height:44px;padding:0 16px;
+  flex-shrink:0;border-bottom:1px solid var(--gold-dim);background:var(--gold-soft);
+}
+#build-bar.show{display:flex}
+.bb-label{font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);flex-shrink:0}
+.bb-client{font-size:12px;color:var(--fg3);flex-shrink:0}
+.bb-pills{display:flex;align-items:center;gap:5px;flex:1;overflow:hidden}
+.bb-pill{font-size:11px;white-space:nowrap}
+.bb-pill.done{color:var(--green)}
+.bb-pill.active{color:var(--gold)}
+.bb-pill.empty{color:var(--fg4)}
+.bb-sep{color:var(--fg4);font-size:10px}
+.bb-generate{
+  margin-left:auto;display:flex;align-items:center;gap:5px;
+  padding:6px 14px;background:var(--gold);color:#000;font-size:11px;font-weight:700;
+  font-family:'Space Grotesk',sans-serif;border-radius:var(--r);transition:.12s;flex-shrink:0;
+}
+.bb-generate:hover{background:#d4ae58}
+.bb-exit{font-size:11px;color:var(--fg4);padding:4px 8px;border:1px solid var(--border2);border-radius:5px;flex-shrink:0}
+.bb-exit:hover{color:var(--fg);border-color:var(--border);}
+
+/* ── BUILD FILTER BAR ──────────────────────────────────────────────────────── */
+#build-filter-bar{
+  display:none;padding:0 16px;height:32px;align-items:center;
+  border-bottom:1px solid var(--border);background:rgba(201,168,76,.04);
+  font-size:11px;color:var(--fg3);
+}
+#build-filter-bar.show{display:flex}
+#build-filter-bar strong{color:var(--gold)}
+
+/* ── SIDEBAR ───────────────────────────────────────────────────────────────── */
+.sb-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-tab{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:5px;
+  height:40px;font-size:11px;font-weight:500;color:var(--fg4);
+  border-bottom:2px solid transparent;transition:.12s;
+}
+.sb-tab:hover{color:var(--fg2)}
+.sb-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.sb-tab svg{width:13px;height:13px}
+.sb-section{padding:6px 0}
+.sb-label{
+  font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;
+  text-transform:uppercase;color:var(--fg4);padding:6px 14px 4px;
+}
 .sb-item{
-  display:flex;align-items:center;gap:8px;width:100%;
-  padding:7px 14px;font-size:12px;color:var(--t2);
-  transition:all .1s;text-align:left;border:none;background:none;
-  position:relative;
+  position:relative;display:flex;align-items:center;gap:8px;
+  width:100%;padding:7px 10px 7px 14px;border-radius:6px;
+  font-size:13px;color:var(--fg3);transition:.1s;text-align:left;
 }
-.sb-item:hover{color:var(--t1);background:rgba(255,255,255,.03)}
-.sb-item.active{color:var(--gold);background:var(--gd1)}
+.sb-item:hover{background:var(--surface);color:var(--fg2)}
+.sb-item.active{background:var(--gold-soft);color:var(--fg)}
 .sb-item.active::before{
-  content:'';position:absolute;left:0;top:0;bottom:0;
-  width:2px;background:var(--gold);
+  content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:3px;height:18px;background:var(--gold);border-radius:0 2px 2px 0;
 }
-.sb-item-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0}
-.sb-item-label{flex:1;font-weight:500}
-.sb-item-count{
-  font-family:'JetBrains Mono',monospace;font-size:9px;
-  color:var(--t4);background:var(--b1);padding:1px 5px;
-  border-radius:2px;
+.sb-item svg,.sb-item .sb-dot{width:15px;height:15px;flex-shrink:0;color:var(--fg4)}
+.sb-item.active svg,.sb-item.active .sb-dot{color:var(--gold)}
+.sb-dot{width:7px;height:7px;border-radius:50%;background:var(--fg4);margin:4px}
+.sb-item.active .sb-dot{background:var(--gold)}
+.sb-count{
+  margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:9px;
+  color:var(--fg4);padding:1px 5px;border-radius:3px;
 }
-.sb-item.active .sb-item-count{color:var(--gold);background:var(--gd1)}
+.sb-item.active .sb-count{color:var(--gold)}
+.sb-div{height:1px;background:var(--border);margin:8px 10px}
+.sb-guide-item{padding:7px 14px;font-size:13px;color:var(--fg3);border-radius:6px;transition:.1s;cursor:default}
+.sb-guide-item:hover{background:var(--surface);color:var(--fg2)}
+.sb-guide-gold{padding:7px 14px;font-size:13px;color:var(--gold);font-weight:500}
 
-.sb-divider{height:1px;background:var(--b1);margin:8px 0}
-
-/* ── MAIN ─────────────────────────────────────────────── */
-.main{display:flex;flex-direction:column;overflow:hidden}
-
-.main-toolbar{
-  padding:12px 18px;border-bottom:1px solid var(--b1);
-  display:flex;align-items:center;gap:10px;background:var(--panel);
-  flex-shrink:0;
+/* ── BUILD WORKSPACE ───────────────────────────────────────────────────────── */
+#build-workspace{display:none;flex-direction:column;overflow:hidden;border-right:1px solid var(--border)}
+#build-workspace.show{display:flex;width:220px;flex-shrink:0}
+.bw-head{padding:10px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
+.bw-head-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold)}
+.bw-body{flex:1;overflow-y:auto;padding:10px 10px;scrollbar-width:thin;scrollbar-color:#242424 transparent}
+.bw-field{margin-bottom:12px}
+.bw-field label{display:block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--fg4);margin-bottom:5px}
+.bw-input{
+  width:100%;background:var(--surface);border:1px solid var(--border);
+  padding:7px 10px;font-size:12px;color:var(--fg);border-radius:var(--r);
+  outline:none;transition:border-color .15s;
 }
-.result-count{font-size:11px;color:var(--t3);font-family:'JetBrains Mono',monospace}
-.view-toggle{display:flex;gap:2px;margin-left:auto}
-.view-btn{padding:5px 8px;border:1px solid var(--b2);color:var(--t3);font-size:13px;transition:.12s}
-.view-btn.active{color:var(--gold);border-color:var(--gd2)}
-.sort-select{
-  background:var(--surface);border:1px solid var(--b2);
-  padding:5px 10px;font-size:11px;color:var(--t2);outline:none;
+.bw-input:focus{border-color:var(--gold-dim)}
+.bw-select{
+  width:100%;background:var(--surface);border:1px solid var(--border);
+  padding:7px 10px;font-size:12px;color:var(--fg);border-radius:var(--r);
+  outline:none;appearance:none;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23555' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;
+}
+.bw-colors{display:flex;gap:8px}
+.bw-color{flex:1}
+.bw-color-row{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:5px 8px}
+.bw-swatch{width:20px;height:20px;border-radius:4px;flex-shrink:0;position:relative;overflow:hidden;cursor:pointer}
+.bw-swatch input[type=color]{position:absolute;inset:-4px;width:calc(100%+8px);height:calc(100%+8px);opacity:0;cursor:pointer}
+.bw-hex{flex:1;background:transparent;border:none;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--fg);outline:none}
+.bw-sections{margin-bottom:12px}
+.bw-section-item{
+  display:flex;align-items:center;gap:8px;width:100%;
+  padding:7px 10px;border-radius:6px;font-size:12px;color:var(--fg3);
+  transition:.1s;text-align:left;
+}
+.bw-section-item:hover{background:var(--surface);color:var(--fg2)}
+.bw-section-item.active{background:var(--gold-soft);color:var(--fg)}
+.bw-section-status{width:16px;height:16px;flex-shrink:0}
+.bw-generate{
+  width:100%;display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:10px;background:var(--gold);color:#000;font-weight:700;font-size:12px;
+  font-family:'Space Grotesk',sans-serif;border-radius:var(--r);transition:.12s;
+  margin-top:8px;
+}
+.bw-generate:hover:not(:disabled){background:#d4ae58}
+.bw-generate:disabled{opacity:.4;cursor:not-allowed}
+.bw-div{height:1px;background:var(--border);margin:10px 0}
+.bw-projects-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--fg4);margin-bottom:6px}
+.bw-project-item{padding:7px 10px;border-radius:6px;border:1px solid var(--border);font-size:11px;color:var(--fg3);cursor:pointer;transition:.12s;margin-bottom:5px;display:flex;align-items:center;justify-content:space-between}
+.bw-project-item:hover{border-color:var(--border2);color:var(--fg2)}
+.bw-project-name{font-weight:600;color:var(--fg2);font-size:11px}
+.bw-project-meta{font-size:10px;color:var(--fg4);margin-top:1px}
+
+/* ── TOOLBAR ───────────────────────────────────────────────────────────────── */
+.tb-count{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--fg4)}
+.tb-count strong{color:var(--gold)}
+.tb-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.tb-view{display:flex;align-items:center;gap:1px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:2px}
+.tb-view-btn{width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:5px;color:var(--fg4);transition:.12s}
+.tb-view-btn:hover{color:var(--fg2)}
+.tb-view-btn.active{background:var(--gold);color:#000}
+.tb-sort{
+  height:32px;padding:0 28px 0 10px;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);font-size:11px;color:var(--fg3);outline:none;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23555' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 8px center;
 }
 
-.grid-wrap{flex:1;overflow-y:auto;padding:16px}
-.grid-wrap::-webkit-scrollbar{width:4px}
-.grid-wrap::-webkit-scrollbar-thumb{background:var(--b2)}
-
-/* Card grids */
-.comp-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
-.comp-grid.view-lg{grid-template-columns:repeat(auto-fill,minmax(340px,1fr))}
-.comp-grid.view-sm{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
-
-/* ── COMPONENT CARD ──────────────────────────────────── */
+/* ── COMPONENT CARDS ───────────────────────────────────────────────────────── */
+#comp-grid{display:grid;gap:16px}
 .c-card{
-  background:var(--card);border:1px solid var(--b1);
-  overflow:hidden;transition:.2s;position:relative;
-  cursor:pointer;
+  border:1px solid var(--border);border-radius:12px;background:var(--panel);
+  overflow:hidden;cursor:pointer;transition:border-color .15s,transform .15s,box-shadow .15s;
+  animation:rise .45s cubic-bezier(.22,1,.36,1) both;
 }
-.c-card:hover{border-color:var(--b2);transform:translateY(-1px);box-shadow:0 8px 32px rgba(0,0,0,.4)}
-
-.c-preview{
-  position:relative;height:200px;background:var(--bg);
-  overflow:hidden;
+.c-card:hover{border-color:rgba(255,255,255,.12);transform:translateY(-1px);box-shadow:0 10px 40px -12px rgba(0,0,0,.8)}
+.c-card.selected{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+.c-preview{position:relative;height:200px;overflow:hidden;background:#0b0b0b}
+.c-preview iframe{width:100%;height:100%;border:none;pointer-events:none;background:#0b0b0b}
+.c-preview-ph{width:100%;height:100%;background:#0b0b0b;display:flex;align-items:center;justify-content:center}
+.c-src-badge{
+  position:absolute;top:8px;left:8px;
+  background:rgba(0,0,0,.65);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(8px);
+  font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--fg3);
+  padding:2px 7px;border-radius:4px;
+  opacity:0;transition:opacity .15s;pointer-events:none;
 }
-.c-preview iframe{
-  width:200%;height:200%;border:none;
-  transform:scale(.5);transform-origin:top left;
-  pointer-events:none;
-}
-.c-preview-overlay{
-  position:absolute;inset:0;
-  background:linear-gradient(to top, rgba(0,0,0,.7) 0%, rgba(0,0,0,0) 50%);
-  opacity:0;transition:.2s;
-  display:flex;align-items:flex-end;justify-content:flex-end;
-  padding:10px;gap:6px;
-}
-.c-card:hover .c-preview-overlay{opacity:1}
-.c-overlay-btn{
-  padding:5px 12px;font-size:11px;font-weight:700;
-  border:1px solid rgba(255,255,255,.2);
-  color:var(--t0);background:rgba(0,0,0,.6);
-  backdrop-filter:blur(8px);transition:.12s;
-}
-.c-overlay-btn.primary{background:var(--gold);color:#000;border-color:var(--gold)}
-.c-overlay-btn:hover{background:rgba(255,255,255,.15)}
-.c-overlay-btn.primary:hover{background:#d4ae58}
-
+.c-card:hover .c-src-badge{opacity:1}
 .c-fav{
   position:absolute;top:8px;right:8px;
-  width:26px;height:26px;border-radius:50%;
-  background:rgba(0,0,0,.5);backdrop-filter:blur(8px);
-  border:1px solid rgba(255,255,255,.1);
-  display:flex;align-items:center;justify-content:center;
-  font-size:11px;opacity:0;transition:.2s;color:var(--t2);
+  background:rgba(0,0,0,.65);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(8px);
+  width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .15s;
 }
-.c-card:hover .c-fav{opacity:1}
-.c-fav.starred{opacity:1;color:var(--gold)}
-.c-fav:hover{background:rgba(0,0,0,.8)}
-
-.c-source-badge{
-  position:absolute;top:8px;left:8px;
-  font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:600;
-  padding:2px 7px;border:1px solid rgba(255,255,255,.08);
-  background:rgba(0,0,0,.6);backdrop-filter:blur(8px);
-  color:rgba(255,255,255,.5);opacity:0;transition:.2s;
+.c-fav:hover{background:rgba(0,0,0,.85)}
+.c-fav.active,.c-card:hover .c-fav{opacity:1}
+.c-fav svg{width:13px;height:13px;color:var(--fg3)}
+.c-fav.active svg{color:var(--gold);fill:var(--gold)}
+.c-selected-badge{
+  position:absolute;bottom:8px;left:8px;
+  background:var(--gold);color:#000;font-size:9px;font-weight:700;
+  padding:2px 8px;border-radius:4px;display:flex;align-items:center;gap:3px;
 }
-.c-card:hover .c-source-badge{opacity:1}
-
+.c-overlay{
+  position:absolute;inset-x:0;bottom:0;
+  padding:12px 12px 10px;padding-top:32px;
+  background:linear-gradient(to top,rgba(0,0,0,.9) 0%,rgba(0,0,0,.6) 60%,transparent 100%);
+  display:flex;gap:6px;align-items:flex-end;
+  opacity:0;transition:opacity .15s;
+}
+.c-card:hover .c-overlay{opacity:1}
+.c-overlay-primary{
+  display:flex;align-items:center;gap:5px;padding:6px 12px;
+  background:var(--gold);color:#000;font-size:11px;font-weight:700;
+  font-family:'Space Grotesk',sans-serif;border-radius:6px;transition:.12s;
+}
+.c-overlay-primary:hover{background:#d4ae58}
+.c-overlay-secondary{
+  display:flex;align-items:center;gap:5px;padding:6px 12px;
+  border:1px solid rgba(255,255,255,.2);color:var(--fg);font-size:11px;
+  border-radius:6px;transition:.12s;
+}
+.c-overlay-secondary:hover{background:rgba(255,255,255,.1)}
 .c-foot{
-  padding:10px 12px;border-top:1px solid var(--b1);
-  display:flex;align-items:center;gap:7px;
+  display:flex;align-items:center;gap:8px;height:40px;
+  border-top:1px solid var(--border);padding:0 12px;
 }
-.c-name{
-  font-family:'Space Grotesk',sans-serif;font-size:12px;
-  font-weight:700;color:var(--t0);flex:1;min-width:0;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-.c-badge{
-  font-size:9px;font-weight:600;padding:2px 6px;
-  border:1px solid;white-space:nowrap;
-  font-family:'JetBrains Mono',monospace;
-}
-.badge-css{color:#38bdf8;border-color:rgba(56,189,248,.25)}
-.badge-tailwind{color:#a78bfa;border-color:rgba(167,139,250,.25)}
-.badge-react{color:#61dafb;border-color:rgba(97,218,251,.25)}
-.badge-js{color:#fbbf24;border-color:rgba(251,191,36,.25)}
-.badge-default{color:var(--t3);border-color:var(--b2)}
+.c-name{flex:1;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:var(--fg);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.c-stack-badge{font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.5px;padding:2px 6px;border-radius:3px;border:1px solid;flex-shrink:0}
+.c-code-btn{color:var(--fg4);transition:.12s;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.c-code-btn:hover{color:var(--gold)}
+.c-code-btn svg{width:13px;height:13px}
 
-.c-code-btn{
-  width:28px;height:28px;display:flex;align-items:center;justify-content:center;
-  border:1px solid var(--b2);color:var(--t3);font-size:10px;
-  transition:.12s;flex-shrink:0;
-}
-.c-code-btn:hover{color:var(--gold);border-color:var(--gd2)}
+/* ── LOADING / EMPTY ────────────────────────────────────────────────────────── */
+.loading-grid{display:grid;gap:16px}
+.loading-card{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--panel)}
+.loading-preview{height:200px;background:var(--surface);position:relative;overflow:hidden}
+.loading-preview::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.03),transparent);animation:shimmer 1.5s infinite}
+@keyframes shimmer{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.loading-foot{height:40px;border-top:1px solid var(--border);display:flex;align-items:center;padding:0 12px;gap:8px}
+.loading-bar{height:10px;background:var(--surface);border-radius:4px}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;min-height:300px;gap:12px;text-align:center}
+.empty-icon{width:52px;height:52px;border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:22px}
+.empty-title{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:var(--fg)}
+.empty-sub{font-size:13px;color:var(--fg4);max-width:280px;line-height:1.6}
 
-/* ── GUIDE VIEW ──────────────────────────────────────── */
-.guide-wrap{padding:24px;overflow-y:auto;flex:1}
-.guide-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
-.guide-card{
-  background:var(--panel);border:1px solid var(--b1);padding:20px;
-  transition:.15s;cursor:pointer;
+/* ── CODE MODAL ─────────────────────────────────────────────────────────────── */
+.modal-overlay{
+  position:fixed;inset:0;z-index:100;
+  display:none;align-items:center;justify-content:center;padding:16px;
+  background:rgba(0,0,0,.7);backdrop-filter:blur(6px);
 }
-.guide-card:hover{border-color:var(--b3);background:var(--surface)}
-.guide-card h3{
-  font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;
-  color:var(--t0);margin-bottom:8px;display:flex;align-items:center;gap:8px;
-}
-.guide-card p{font-size:12px;color:var(--t2);line-height:1.65;margin-bottom:12px}
-.guide-needs{display:flex;flex-wrap:wrap;gap:4px}
-.guide-need{
-  font-size:10px;color:var(--t3);background:var(--b1);
-  border:1px solid var(--b2);padding:2px 8px;
-}
-.guide-advantage{
-  margin-top:12px;padding:10px 12px;
-  background:var(--gd1);border-left:2px solid var(--gold);
-  font-size:11px;color:var(--t2);line-height:1.5;
-}
-.guide-advantage strong{color:var(--gold)}
-
-.vs-section{margin-top:32px}
-.vs-title{
-  font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;
-  color:var(--t0);margin-bottom:16px;letter-spacing:-.5px;
-}
-.vs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
-.vs-card{background:var(--panel);border:1px solid var(--b1);padding:16px}
-.vs-card h4{font-size:12px;font-weight:700;color:var(--t0);margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.vs-list{list-style:none;display:flex;flex-direction:column;gap:5px}
-.vs-list li{font-size:11px;color:var(--t2);padding-left:14px;position:relative;line-height:1.5}
-.vs-list li::before{content:'✓';position:absolute;left:0;color:var(--green);font-weight:700;font-size:10px}
-.vs-list li.no::before{content:'✗';color:var(--red)}
-
-/* ── CODE MODAL ──────────────────────────────────────── */
-.modal-bg{
-  display:none;position:fixed;inset:0;
-  background:rgba(0,0,0,.85);z-index:100;
-  align-items:center;justify-content:center;padding:20px;
-  backdrop-filter:blur(4px);
-}
-.modal-bg.open{display:flex}
-.modal{
-  background:var(--panel);border:1px solid var(--b2);
-  width:100%;max-width:940px;max-height:92vh;
+.modal-overlay.show{display:flex}
+.modal-box{
+  width:100%;max-width:900px;max-height:90vh;
   display:flex;flex-direction:column;overflow:hidden;
+  border:1px solid var(--border);border-radius:var(--r-xl);
+  background:var(--panel);box-shadow:0 40px 80px -20px rgba(0,0,0,.9);
 }
 .modal-head{
-  display:flex;align-items:center;gap:10px;
-  padding:13px 16px;border-bottom:1px solid var(--b1);flex-wrap:wrap;
+  display:flex;align-items:center;gap:10px;height:48px;
+  padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;
 }
-.modal-name{
-  font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;
-  color:var(--t0);flex:1;min-width:0;overflow:hidden;
-  text-overflow:ellipsis;white-space:nowrap;
-}
-.m-tab{
-  padding:5px 13px;font-size:11px;color:var(--t3);
-  border:1px solid var(--b2);transition:.12s;
-}
-.m-tab.active{color:var(--gold);border-color:var(--gd2);background:var(--gd1)}
-.m-tab:hover:not(.active){color:var(--t1)}
-.copy-btn{
-  padding:6px 14px;background:var(--gold);color:#000;
-  font-size:11px;font-weight:700;transition:.12s;
-}
-.copy-btn:hover{background:#d4ae58}
-.x-btn{
-  width:28px;height:28px;display:flex;align-items:center;justify-content:center;
-  color:var(--t3);border:1px solid var(--b2);font-size:14px;transition:.12s;
-}
-.x-btn:hover{color:var(--t0)}
-.modal-body{flex:1;min-height:480px;overflow:hidden}
-.code-panel{height:100%;overflow-y:auto;padding:14px;background:var(--bg)}
-pre{font-family:'JetBrains Mono',monospace;font-size:11px;color:#e2c08d;line-height:1.65;white-space:pre-wrap;word-break:break-word}
-.preview-panel{height:100%}
-.preview-panel iframe{width:100%;height:100%;border:none}
+.modal-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:var(--fg)}
+.modal-tabs{display:flex;align-items:center;gap:2px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:2px;margin-left:auto}
+.modal-tab{padding:4px 14px;border-radius:5px;font-size:11px;font-weight:500;color:var(--fg3);transition:.12s}
+.modal-tab:hover{color:var(--fg2)}
+.modal-tab.active{background:var(--gold);color:#000}
+.modal-copy{display:flex;align-items:center;gap:5px;padding:6px 14px;background:var(--gold);color:#000;font-size:11px;font-weight:700;border-radius:var(--r);font-family:'Space Grotesk',sans-serif}
+.modal-close{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:var(--r);color:var(--fg3);transition:.12s}
+.modal-close:hover{background:var(--surface);color:var(--fg)}
+.modal-close svg{width:15px;height:15px}
+.modal-body{flex:1;overflow:hidden}
+.modal-preview{width:100%;height:100%;background:#0b0b0b}
+.modal-preview .fargo-grid{width:100%;height:100%}
+.modal-preview iframe{width:100%;height:100%;border:none;background:#0b0b0b}
+.modal-code{height:100%;overflow-y:auto;background:#080808;padding:20px;scrollbar-width:thin;scrollbar-color:#242424 transparent}
+.modal-code code{font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7;color:#e2c08d;white-space:pre-wrap;word-break:break-all}
 
-/* ── SETTINGS MODAL ──────────────────────────────────── */
-.settings-modal{
-  background:var(--panel);border:1px solid var(--b2);
-  width:100%;max-width:500px;
+/* ── SMALL MODALS ───────────────────────────────────────────────────────────── */
+.sm-modal-box{width:100%;max-width:480px;border:1px solid var(--border);border-radius:var(--r-xl);background:var(--panel);box-shadow:0 40px 80px -20px rgba(0,0,0,.9);overflow:hidden}
+.sm-modal-head{display:flex;align-items:center;justify-content:space-between;height:48px;padding:0 20px;border-bottom:1px solid var(--border)}
+.sm-modal-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:var(--fg)}
+.sm-modal-body{padding:20px}
+.sm-label{display:block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--fg4);margin-bottom:5px}
+.sm-input{
+  width:100%;background:var(--surface);border:1px solid var(--border);
+  padding:9px 12px;font-size:13px;color:var(--fg);border-radius:var(--r);
+  outline:none;transition:border-color .15s;
 }
-.s-body{padding:20px;display:flex;flex-direction:column;gap:14px;max-height:80vh;overflow-y:auto}
-.field label{display:block;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);margin-bottom:5px}
-.field input{width:100%;background:var(--bg);border:1px solid var(--b2);padding:9px 12px;font-size:12px;color:var(--t1);outline:none;font-family:'JetBrains Mono',monospace}
-.field input:focus{border-color:var(--gd2)}
-.field-hint{font-size:11px;color:var(--t4);margin-top:3px;line-height:1.5}
-.field-hint a{color:var(--gold);text-decoration:none}
-.s-test{display:none;font-size:11px;padding:8px 12px;border-left:2px solid var(--b2);margin-top:4px}
-.s-test.ok{border-color:var(--green);color:var(--green);background:rgba(34,197,94,.06)}
-.s-test.err{border-color:var(--red);color:var(--red);background:rgba(239,68,68,.06)}
-.s-footer{display:flex;gap:8px;justify-content:flex-end;padding-top:10px;border-top:1px solid var(--b1)}
-.s-footer button{padding:7px 18px;font-size:12px;font-weight:600}
+.sm-input:focus{border-color:var(--gold-dim)}
+.sm-input::placeholder{color:var(--fg4)}
+.sm-field{margin-bottom:14px}
+.sm-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sm-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.sm-btn-cancel{padding:8px 16px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;color:var(--fg3);transition:.12s}
+.sm-btn-cancel:hover{background:var(--surface);color:var(--fg2)}
+.sm-btn-save{padding:8px 18px;background:var(--gold);color:#000;font-size:12px;font-weight:700;border-radius:var(--r);font-family:'Space Grotesk',sans-serif}
+.sm-status-ok{display:flex;align-items:center;gap:6px;padding:9px 12px;border:1px solid rgba(34,197,94,.25);background:rgba(34,197,94,.08);border-radius:var(--r);font-size:12px;color:var(--green);margin-bottom:14px}
+.sm-status-ok svg{width:14px;height:14px;flex-shrink:0}
 
-/* ── ADD MODAL ───────────────────────────────────────── */
-.add-modal{background:var(--panel);border:1px solid var(--b2);width:100%;max-width:600px}
-.add-body{padding:18px;display:flex;flex-direction:column;gap:12px;max-height:85vh;overflow-y:auto}
-.add-body input,.add-body select,.add-body textarea{width:100%;background:var(--bg);border:1px solid var(--b2);padding:8px 12px;font-size:12px;color:var(--t1);outline:none;resize:vertical}
-.add-body input,.add-body select{font-family:'Inter',sans-serif}
-.add-body input:focus,.add-body select:focus,.add-body textarea:focus{border-color:var(--gd2)}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.fl{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);display:block;margin-bottom:5px}
+/* ── CLIENT GUIDE ───────────────────────────────────────────────────────────── */
+#guide-wrap{padding:32px 24px;max-width:1100px;margin:0 auto}
+.guide-hero{margin-bottom:28px}
+.guide-hero h1{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:var(--fg);margin-bottom:6px}
+.guide-hero p{font-size:13px;color:var(--fg4);line-height:1.65;max-width:460px}
+.guide-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:36px}
+.guide-card{border:1px solid var(--border);border-radius:var(--r-lg);background:var(--panel);padding:20px;transition:border-color .15s;animation:rise .4s ease both}
+.guide-card:hover{border-color:rgba(255,255,255,.12)}
+.guide-card-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.guide-card-emoji{font-size:22px}
+.guide-card-name{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:var(--fg)}
+.guide-card-desc{font-size:12px;color:var(--fg3);line-height:1.65;margin-bottom:12px}
+.guide-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+.guide-tag{font-size:10px;color:var(--fg4);border:1px solid var(--border);border-radius:99px;padding:2px 9px}
+.guide-edge-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.guide-edge{font-size:12px;color:var(--fg3);line-height:1.6;border-top:1px solid var(--border);padding-top:10px}
+.guide-h2{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:var(--fg);margin-bottom:14px}
+.guide-adv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.guide-adv{border:1px solid var(--border);border-radius:var(--r-lg);background:var(--panel);padding:18px}
+.guide-adv h3{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;color:var(--gold);margin-bottom:6px}
+.guide-adv p{font-size:12px;color:var(--fg4);line-height:1.6}
 
-/* ── DROP ZONE ───────────────────────────────────────── */
-.drop-zone{
-  display:none;position:fixed;inset:0;z-index:200;
-  background:rgba(0,0,0,.88);flex-direction:column;
-  align-items:center;justify-content:center;gap:12px;pointer-events:none;
+/* ── DROP ZONE ──────────────────────────────────────────────────────────────── */
+#drop-overlay{
+  position:fixed;inset:0;z-index:200;pointer-events:none;
+  display:none;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.7);backdrop-filter:blur(6px);
 }
-.drop-zone.active{display:flex;pointer-events:all}
+#drop-overlay.show{display:flex}
+.drop-box{
+  border:2px dashed var(--gold);border-radius:var(--r-xl);
+  padding:48px 60px;text-align:center;
+}
+.drop-box h3{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:var(--gold);margin-bottom:6px}
+.drop-box p{font-size:13px;color:var(--fg4)}
 
-/* ── TOAST ───────────────────────────────────────────── */
+/* ── TOAST ──────────────────────────────────────────────────────────────────── */
+#toast-container{position:fixed;bottom:20px;right:20px;z-index:300;display:flex;flex-direction:column;gap:6px}
 .toast{
-  position:fixed;bottom:20px;right:20px;z-index:300;
-  padding:10px 18px;font-size:12px;font-weight:700;
-  background:var(--gold);color:#000;
-  transform:translateY(60px);opacity:0;transition:.3s;
+  display:flex;align-items:center;gap:8px;padding:10px 14px;min-width:220px;
+  border-radius:var(--r);font-size:12px;font-weight:500;
+  animation:rise .25s ease;
+  background:var(--panel);border:1px solid var(--border);color:var(--fg2);
 }
-.toast.show{transform:translateY(0);opacity:1}
-.toast.err{background:var(--red);color:#fff}
+.toast.success{border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.06);color:var(--green)}
+.toast.error{border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.06);color:var(--red)}
 
-/* ── EMPTY ───────────────────────────────────────────── */
-.empty{grid-column:1/-1;text-align:center;padding:80px 20px;color:var(--t4)}
-.empty-icon{font-size:2.5rem;margin-bottom:10px}
-
-/* ── BUILD MODE ─────────────────────────────────────────────────── */
-.build-mode-bar{
-  display:none;align-items:center;gap:10px;
-  padding:8px 20px;background:rgba(201,168,76,.06);
-  border-bottom:1px solid var(--gd2);font-size:11px;
-  color:var(--gold);flex-shrink:0;
+/* ── MOBILE SIDEBAR ─────────────────────────────────────────────────────────── */
+.sidebar-backdrop{display:none;position:fixed;inset:0;z-index:45;background:rgba(0,0,0,.6);backdrop-filter:blur(4px)}
+@media(max-width:768px){
+  #sidebar,#build-workspace{position:fixed;inset-y:0;left:0;z-index:46;transform:translateX(-100%);transition:transform .2s;width:240px!important}
+  #sidebar.open,#build-workspace.open{transform:translateX(0)}
+  .sidebar-backdrop.show{display:block}
+  .h-brand-tag{display:none}
+  .h-stack-pills{display:none}
+  .h-btn span{display:none}
+  #build-bar .bb-pills{display:none}
 }
-.build-mode-bar.active{display:flex}
-.bm-label{font-weight:700;letter-spacing:1px;text-transform:uppercase;font-size:10px}
-.bm-section-pill{
-  padding:4px 10px;border:1px solid var(--gd2);font-size:10px;
-  color:var(--gold);cursor:pointer;transition:.12s;
-}
-.bm-section-pill.active-section{background:var(--gold);color:#000}
-.bm-generate{
-  margin-left:auto;padding:6px 18px;background:var(--gold);
-  color:#000;font-size:11px;font-weight:800;cursor:pointer;
-  border:none;font-family:'Space Grotesk',sans-serif;transition:.12s;
-}
-.bm-generate:hover{background:#d4ae58}
-.bm-generate:disabled{opacity:.4;cursor:not-allowed}
-
-/* Build workspace sidebar */
-.build-workspace{display:none;flex-direction:column;overflow:hidden}
-.build-workspace.active{display:flex}
-.bw-head{padding:12px 14px;border-bottom:1px solid var(--b1);flex-shrink:0}
-.bw-title{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--gold);margin-bottom:2px}
-.bw-sub{font-size:10px;color:var(--t4)}
-.bw-scroll{flex:1;overflow-y:auto;padding:10px 0}
-.bw-section-label{font-size:8.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--t4);padding:8px 14px 4px}
-.bw-field{padding:0 14px;margin-bottom:10px}
-.bw-field label{display:block;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);margin-bottom:4px}
-.bw-field input,.bw-field select{width:100%;background:var(--bg);border:1px solid var(--b2);padding:7px 10px;font-size:11px;color:var(--t1);outline:none;font-family:'Inter',sans-serif}
-.bw-field input:focus,.bw-field select:focus{border-color:var(--gd2)}
-.bw-color-row{display:flex;gap:6px}
-.bw-color-swatch{width:32px;height:32px;border:1px solid var(--b2);position:relative;overflow:hidden;flex-shrink:0;cursor:pointer}
-.bw-color-swatch input[type=color]{position:absolute;inset:-4px;width:calc(100%+8px);height:calc(100%+8px);opacity:0;cursor:pointer}
-.bw-section-item{
-  display:flex;align-items:center;gap:8px;
-  padding:7px 14px;cursor:pointer;transition:.1s;font-size:11px;
-}
-.bw-section-item:hover{background:rgba(255,255,255,.03)}
-.bw-section-item.bsi-active{background:var(--gd1);color:var(--gold)}
-.bw-section-item.bsi-done{color:var(--t2)}
-.bsi-status{width:14px;height:14px;border:1px solid var(--b3);border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:8px}
-.bsi-status.done{background:var(--green);border-color:var(--green);color:#000}
-.bsi-status.active{background:var(--gold);border-color:var(--gold);color:#000}
-.bsi-name{flex:1;font-weight:500}
-.bsi-comp{font-size:9px;color:var(--t4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:70px}
-
-/* Build mode card overlay */
-.c-add-btn{
-  padding:7px 14px;background:var(--gold);color:#000;
-  font-size:11px;font-weight:800;letter-spacing:.5px;
-  border:none;cursor:pointer;transition:.12s;font-family:'Space Grotesk',sans-serif;
-}
-.c-add-btn:hover{background:#d4ae58}
-.c-card.build-selected{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
-.c-card.build-selected .c-preview::after{
-  content:'✓ Selected';position:absolute;top:8px;left:8px;
-  background:var(--gold);color:#000;font-size:9px;font-weight:800;
-  padding:3px 8px;letter-spacing:.5px;
-}
-.build-filter-bar{
-  padding:8px 18px;border-bottom:1px solid var(--b1);
-  font-size:11px;color:var(--gold);background:var(--gd1);
-  display:none;
-}
-.build-filter-bar.active{display:block}
-
 </style>
 </head>
 <body>
-<div class="app">
+<div id="app" class="fargo-aura">
 
-  <!-- TOP BAR -->
-  <header class="topbar">
-    <div class="tb-brand">
-      <div class="tb-logo">Fargo</div>
-      <div class="tb-tag">Design Library</div>
+  <!-- ── HEADER ──────────────────────────────────────────────────────────── -->
+  <header id="header">
+    <button class="h-icon-btn md-hide" id="menu-btn" onclick="toggleSidebar()" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    </button>
+    <div class="h-brand">
+      <span class="h-brand-logo font-head">Fargo</span>
+      <span class="h-brand-tag font-mono">Design Library</span>
     </div>
-
-    <div class="tb-search-wrap">
-      <span class="search-icon">⌕</span>
-      <input class="tb-search" type="text" placeholder="Search components..." id="search" oninput="filterComponents()">
+    <div class="h-search">
+      <svg class="h-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="search" placeholder="Search components…" oninput="onSearch(this.value)">
     </div>
-
-    <div class="tb-filters" id="stackFilters">
-      <button class="stack-btn active" data-stack="all"      onclick="setStack('all',this)">All</button>
-      <button class="stack-btn"        data-stack="css"      onclick="setStack('css',this)">CSS</button>
-      <button class="stack-btn"        data-stack="tailwind" onclick="setStack('tailwind',this)">Tailwind</button>
-      <button class="stack-btn"        data-stack="react"    onclick="setStack('react',this)">React</button>
+    <div class="h-stack-pills" id="stack-pills">
+      <button class="h-stack-pill active" onclick="setStack('All',this)">All</button>
+      <button class="h-stack-pill" onclick="setStack('CSS',this)">CSS</button>
+      <button class="h-stack-pill" onclick="setStack('Tailwind',this)">Tailwind</button>
+      <button class="h-stack-pill" onclick="setStack('React',this)">React</button>
+      <button class="h-stack-pill" onclick="setStack('JS',this)">JS</button>
     </div>
-
-    <div class="tb-right">
-      <div class="sync-dot" id="syncDot" style="display:none"></div>
-      <span class="sync-label" id="syncLabel" style="display:none"></span>
-      <button class="tb-btn" id="syncBtn" style="display:none" onclick="syncToGitHub()">↑ Sync</button>
-      <label class="tb-btn" style="cursor:pointer">
-        ↑ Import JSON
-        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(this)">
-      </label>
-      <button class="tb-btn" id="buildModeBtn" onclick="toggleBuildMode()" style="border-color:var(--gd2);color:var(--gold)">🔨 Build</button>
-    <button class="tb-btn gold" onclick="openAddModal()">+ Add</button>
-      <button class="tb-btn" onclick="openSettings()" title="GitHub Settings">⚙</button>
+    <div class="h-actions">
+      <div class="h-sync"><div class="h-sync-dot" id="sync-dot"></div><span id="sync-label" style="display:none;font-size:10px"></span></div>
+      <button class="h-btn" onclick="document.getElementById('file-input').click()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <span>Import</span>
+      </button>
+      <button class="h-btn h-btn-build" id="build-btn" onclick="toggleBuildMode()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m14.7 6.3-7.7 7.7a1 1 0 0 0-.3.7v2.3h2.3a1 1 0 0 0 .7-.3l7.7-7.7M14.7 6.3l2-2a1 1 0 0 1 1.4 0l1.6 1.6a1 1 0 0 1 0 1.4l-2 2M14.7 6.3l2 2"/></svg>
+        <span>Build</span>
+      </button>
+      <button class="h-btn h-btn-add" onclick="openModal('add-modal')">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span>Add</span>
+      </button>
+      <button class="h-icon-btn" onclick="openModal('settings-modal')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
     </div>
   </header>
 
-  <!-- BUILD MODE STATUS BAR -->
-<div class="build-mode-bar" id="buildModeBar">
-  <span class="bm-label">Build Mode</span>
-  <span id="bmClientLabel" style="color:var(--t3)">Select a client type →</span>
-  <div id="bmSectionPills" style="display:flex;gap:4px;flex-wrap:wrap"></div>
-  <button class="bm-generate" id="bmGenerateBtn" onclick="generateFromBuild()" disabled>Generate Site ↓</button>
-  <button onclick="toggleBuildMode()" style="padding:4px 10px;border:1px solid var(--b2);color:var(--t3);background:none;font-size:11px;cursor:pointer">✕ Exit Build</button>
-</div>
-
-<!-- BUILD FILTER BAR (shows above grid when in build mode) -->
-<div class="build-filter-bar" id="buildFilterBar"></div>
-
-<div class="body">
-  <!-- BUILD WORKSPACE SIDEBAR (replaces normal sidebar in build mode) -->
-  <div class="build-workspace" id="buildWorkspace">
-    <div class="bw-head">
-      <div class="bw-title">⚡ Build Workspace</div>
-      <div class="bw-sub">Building a site section by section</div>
-    </div>
-    <div class="bw-scroll">
-      <div class="bw-section-label">Project</div>
-      <div class="bw-field"><label>Business Name</label><input type="text" id="bwBusinessName" placeholder="Client Name" oninput="updateBuildPreview()"></div>
-      <div class="bw-field">
-        <label>Client Type</label>
-        <select id="bwClientType" onchange="updateBuildSections()">
-          <option value="">Select type...</option>
-          <option value="artist">🎨 Artist / Creative</option>
-          <option value="nonprofit">💚 Nonprofit</option>
-          <option value="restaurant">🍕 Restaurant</option>
-          <option value="service">🏢 Service Business</option>
-          <option value="ecommerce">🛍️ E-Commerce</option>
-          <option value="music-events">🎵 Music / Events</option>
-          <option value="corporate">💼 Corporate</option>
-        </select>
-      </div>
-      <div class="bw-section-label">Brand Colors</div>
-      <div class="bw-field">
-        <div class="bw-color-row">
-          <div class="bw-color-swatch" id="bwPrimarySwatch" style="background:#c9a84c" title="Primary Color"><input type="color" value="#c9a84c" oninput="setBuildColor('primary',this.value)"></div>
-          <input type="text" id="bwPrimaryHex" value="#c9a84c" style="flex:1" oninput="setBuildColorHex('primary',this.value)" placeholder="Primary">
-        </div>
-      </div>
-      <div class="bw-field">
-        <div class="bw-color-row">
-          <div class="bw-color-swatch" id="bwSecondarySwatch" style="background:#1a1a2e" title="Secondary Color"><input type="color" value="#1a1a2e" oninput="setBuildColor('secondary',this.value)"></div>
-          <input type="text" id="bwSecondaryHex" value="#1a1a2e" style="flex:1" oninput="setBuildColorHex('secondary',this.value)" placeholder="Secondary">
-        </div>
-      </div>
-      <div class="bw-section-label">Sections</div>
-      <div id="bwSectionList"></div>
-      <div class="bw-field" style="margin-top:12px">
-        <button onclick="generateFromBuild()" style="width:100%;padding:10px;background:var(--gold);color:#000;font-size:11px;font-weight:800;border:none;cursor:pointer;font-family:'Space Grotesk',sans-serif;letter-spacing:.5px">Generate Site ↓</button>
-      </div>
-    </div>
+  <!-- ── BUILD MODE BAR ─────────────────────────────────────────────────── -->
+  <div id="build-bar">
+    <span class="bb-label">Build Mode</span>
+    <span class="bb-client" id="bb-client-label">Select type →</span>
+    <div class="bb-pills" id="bb-pills"></div>
+    <button class="bb-generate" id="bb-gen-btn" onclick="generateSite()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Generate Site
+    </button>
+    <button class="bb-exit" onclick="toggleBuildMode()">✕ Exit</button>
   </div>
-    <!-- SIDEBAR -->
-    <nav class="sidebar" id="sidebar">
-      <div class="sb-mode">
-        <button class="sb-mode-btn active" id="modeComponents" onclick="setSidebarMode('components')">Components</button>
-        <button class="sb-mode-btn" id="modeGuide" onclick="setSidebarMode('guide')">Client Guide</button>
+
+  <!-- ── BUILD FILTER BAR ───────────────────────────────────────────────── -->
+  <div id="build-filter-bar"></div>
+
+  <div id="body">
+    <div class="sidebar-backdrop" id="sb-backdrop" onclick="closeSidebar()"></div>
+
+    <!-- ── SIDEBAR ──────────────────────────────────────────────────────── -->
+    <nav id="sidebar" class="scroll">
+      <div class="sb-tabs">
+        <button class="sb-tab active" id="tab-components" onclick="setTab('components')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Components
+        </button>
+        <button class="sb-tab" id="tab-guide" onclick="setTab('guide')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          Client Guide
+        </button>
       </div>
-      <div class="sb-scroll" id="sbScroll">
-
-        <!-- COMPONENT CATEGORIES -->
-        <div id="sbComponents">
-          <div class="sb-section-label">By Type</div>
-          <button class="sb-item active" data-cat="all"         onclick="selectCat('all',this)">        <span class="sb-item-icon">◈</span><span class="sb-item-label">All</span>            <span class="sb-item-count" id="cnt-all">0</span></button>
-          <button class="sb-item"        data-cat="backgrounds" onclick="selectCat('backgrounds',this)"><span class="sb-item-icon">🌌</span><span class="sb-item-label">Backgrounds</span>   <span class="sb-item-count" id="cnt-backgrounds">0</span></button>
-          <button class="sb-item"        data-cat="cards"       onclick="selectCat('cards',this)">       <span class="sb-item-icon">🃏</span><span class="sb-item-label">Cards & UI</span>    <span class="sb-item-count" id="cnt-cards">0</span></button>
-          <button class="sb-item"        data-cat="animation"   onclick="selectCat('animation',this)">  <span class="sb-item-icon">⚡</span><span class="sb-item-label">Animation</span>     <span class="sb-item-count" id="cnt-animation">0</span></button>
-          <button class="sb-item"        data-cat="text"        onclick="selectCat('text',this)">        <span class="sb-item-icon">✦</span><span class="sb-item-label">Text Effects</span>  <span class="sb-item-count" id="cnt-text">0</span></button>
-          <button class="sb-item"        data-cat="buttons"     onclick="selectCat('buttons',this)">     <span class="sb-item-icon">⬡</span><span class="sb-item-label">Buttons & CTA</span> <span class="sb-item-count" id="cnt-buttons">0</span></button>
-          <button class="sb-item"        data-cat="navigation"  onclick="selectCat('navigation',this)"> <span class="sb-item-icon">≡</span><span class="sb-item-label">Navigation</span>    <span class="sb-item-count" id="cnt-navigation">0</span></button>
-          <button class="sb-item"        data-cat="layouts"     onclick="selectCat('layouts',this)">     <span class="sb-item-icon">▦</span><span class="sb-item-label">Layouts</span>       <span class="sb-item-count" id="cnt-layouts">0</span></button>
-          <button class="sb-item"        data-cat="galleries"   onclick="selectCat('galleries',this)">   <span class="sb-item-icon">🖼</span><span class="sb-item-label">Galleries</span>     <span class="sb-item-count" id="cnt-galleries">0</span></button>
-          <button class="sb-item"        data-cat="forms"       onclick="selectCat('forms',this)">       <span class="sb-item-icon">◻</span><span class="sb-item-label">Forms & Inputs</span><span class="sb-item-count" id="cnt-forms">0</span></button>
-          <button class="sb-item"        data-cat="custom"      onclick="selectCat('custom',this)">      <span class="sb-item-icon">★</span><span class="sb-item-label">My Own</span>        <span class="sb-item-count" id="cnt-custom">0</span></button>
-
-          <div class="sb-divider"></div>
-          <div class="sb-section-label">By Source</div>
-          <button class="sb-item" data-source="uiverse"  onclick="setSource('uiverse',this)"> <span class="sb-item-icon">◐</span><span class="sb-item-label">uiverse.io</span>   <span class="sb-item-count" id="src-uiverse">0</span></button>
-          <button class="sb-item" data-source="Animista" onclick="setSource('Animista',this)"><span class="sb-item-icon">⚙</span><span class="sb-item-label">Animista</span>     <span class="sb-item-count" id="src-animista">0</span></button>
-          <button class="sb-item" data-source="Magic UI" onclick="setSource('Magic UI',this)"><span class="sb-item-icon">✦</span><span class="sb-item-label">Magic UI</span>     <span class="sb-item-count" id="src-magicui">0</span></button>
-          <button class="sb-item" data-source="DaisyUI"  onclick="setSource('DaisyUI',this)"> <span class="sb-item-icon">🌸</span><span class="sb-item-label">DaisyUI</span>      <span class="sb-item-count" id="src-daisyui">0</span></button>
-          <button class="sb-item" data-source="Preline"  onclick="setSource('Preline',this)"> <span class="sb-item-icon">▷</span><span class="sb-item-label">Preline UI</span>   <span class="sb-item-count" id="src-preline">0</span></button>
-          <button class="sb-item" data-source="FreeFrontend" onclick="setSource('FreeFrontend',this)"><span class="sb-item-icon">⊕</span><span class="sb-item-label">FreeFrontend</span><span class="sb-item-count" id="src-ff">0</span></button>
+      <div id="sidebar-components">
+        <div class="sb-section">
+          <div class="sb-label">By Type</div>
+          <button class="sb-item active" onclick="setFilter('all','cat',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><rect x="2" y="3" width="6" height="5"/><rect x="9" y="3" width="6" height="5"/><rect x="16" y="3" width="6" height="5"/><rect x="2" y="11" width="6" height="5"/><rect x="9" y="11" width="6" height="5"/><rect x="16" y="11" width="6" height="5"/></svg>
+            <span>All</span><span class="sb-count" id="cnt-all">0</span>
+          </button>
+          <button class="sb-item" onclick="setFilter('backgrounds','cat',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span>Backgrounds</span><span class="sb-count" id="cnt-backgrounds">0</span>
+          </button>
+          <button class="sb-item" onclick="setFilter('cards','cat',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+            <span>Cards & UI</span><span class="sb-count" id="cnt-cards">0</span>
+          </button>
+          <button class="sb-item" onclick="setFilter('animation','cat',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <span>Animation</span><span class="sb-count" id="cnt-animation">0</span>
+          </button>
+          <button class="sb-item" onclick="setFilter('text','cat',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+            <span>Text Effects</span><span class="sb-count" id="cnt-text">0</span>
+          </button>
+          <button class="sb-item" onclick="setFilter('buttons','cat',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><rect x="3" y="8" width="18" height="8" rx="3"/></svg>
+            <span>Buttons & CTA</span><span class="sb-count" id="cnt-buttons">0</span>
+          </button>
+          <button class="sb-item" onclick="setFilter('navigation','cat',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            <span>Navigation</span><span class="sb-count" id="cnt-navigation">0</span>
+          </button>
+          <button class="sb-item" onclick="setFilter('layouts','cat',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="18" height="7"/></svg>
+            <span>Layouts</span><span class="sb-count" id="cnt-layouts">0</span>
+          </button>
+          <button class="sb-item" onclick="setFilter('galleries','cat',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><rect x="2" y="2" width="8" height="8"/><rect x="14" y="2" width="8" height="8"/><rect x="2" y="14" width="8" height="8"/><rect x="14" y="14" width="8" height="8"/></svg>
+            <span>Galleries</span><span class="sb-count" id="cnt-galleries">0</span>
+          </button>
+          <button class="sb-item" onclick="setFilter('forms','cat',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><rect x="3" y="5" width="18" height="4" rx="1"/><rect x="3" y="13" width="11" height="4" rx="1"/></svg>
+            <span>Forms & Inputs</span><span class="sb-count" id="cnt-forms">0</span>
+          </button>
+          <button class="sb-item" onclick="setFilter('custom','cat',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span>My Own</span><span class="sb-count" id="cnt-custom">0</span>
+          </button>
         </div>
-
-        <!-- GUIDE MODE NAV -->
-        <div id="sbGuide" style="display:none">
-          <div class="sb-section-label">Client Types</div>
-          <button class="sb-item active" onclick="showGuide('all')">      <span class="sb-item-icon">◈</span><span class="sb-item-label">Overview</span></button>
-          <button class="sb-item"        onclick="showGuide('artist')">   <span class="sb-item-icon">🎨</span><span class="sb-item-label">Artist / Creative</span></button>
-          <button class="sb-item"        onclick="showGuide('nonprofit')"><span class="sb-item-icon">💚</span><span class="sb-item-label">Nonprofit</span></button>
-          <button class="sb-item"        onclick="showGuide('restaurant')"><span class="sb-item-icon">🍕</span><span class="sb-item-label">Restaurant</span></button>
-          <button class="sb-item"        onclick="showGuide('ecommerce')"><span class="sb-item-icon">🛍️</span><span class="sb-item-label">E-Commerce</span></button>
-          <button class="sb-item"        onclick="showGuide('service')">  <span class="sb-item-icon">🏢</span><span class="sb-item-label">Service Business</span></button>
-          <button class="sb-item"        onclick="showGuide('music')">    <span class="sb-item-icon">🎵</span><span class="sb-item-label">Music / Events</span></button>
-          <div class="sb-divider"></div>
-          <div class="sb-section-label">Edge Over Platforms</div>
-          <button class="sb-item" onclick="showGuide('vs')"><span class="sb-item-icon">⚡</span><span class="sb-item-label">vs Shopify / Wix</span></button>
+        <div class="sb-div"></div>
+        <div class="sb-section">
+          <div class="sb-label">By Source</div>
+          <div id="source-list"></div>
         </div>
-
+      </div>
+      <div id="sidebar-guide" style="display:none">
+        <div class="sb-section">
+          <div class="sb-label">Client Types</div>
+          <div class="sb-guide-item">🎨 Artist / Creative</div>
+          <div class="sb-guide-item">🕊️ Nonprofit</div>
+          <div class="sb-guide-item">🍽️ Restaurant</div>
+          <div class="sb-guide-item">🛍️ E-Commerce</div>
+          <div class="sb-guide-item">🔧 Service Business</div>
+          <div class="sb-guide-item">🎵 Music / Events</div>
+          <div class="sb-guide-item">💼 Corporate</div>
+        </div>
+        <div class="sb-div"></div>
+        <div class="sb-guide-gold">vs Shopify / Wix →</div>
       </div>
     </nav>
 
-    <!-- MAIN CONTENT -->
-    <main class="main">
-      <div class="main-toolbar">
-        <span class="result-count" id="count-display">– components</span>
-        <div class="view-toggle">
-          <button class="view-btn" onclick="setView('sm')" title="Small">⊞</button>
-          <button class="view-btn active" onclick="setView('md')" title="Medium">⊟</button>
-          <button class="view-btn" onclick="setView('lg')" title="Large">⊡</button>
+    <!-- ── BUILD WORKSPACE ──────────────────────────────────────────────── -->
+    <div id="build-workspace">
+      <div class="bw-head"><div class="bw-head-label">⚡ Build Workspace</div></div>
+      <div class="bw-body scroll">
+        <div class="bw-field">
+          <label>Business Name</label>
+          <input type="text" class="bw-input" id="bw-name" placeholder="Acme Studio" oninput="build.businessName=this.value">
         </div>
-        <select class="sort-select" onchange="setSort(this.value)">
-          <option value="default">Default order</option>
-          <option value="alpha">A → Z</option>
-          <option value="alpha-desc">Z → A</option>
-          <option value="cat">By category</option>
-        </select>
+        <div class="bw-field">
+          <label>Client Type</label>
+          <select class="bw-select" id="bw-type" onchange="onClientTypeChange(this.value)">
+            <option value="Artist">🎨 Artist / Creative</option>
+            <option value="Nonprofit">🕊️ Nonprofit</option>
+            <option value="Restaurant">🍽️ Restaurant</option>
+            <option value="Service Business">🔧 Service Business</option>
+            <option value="E-Commerce">🛍️ E-Commerce</option>
+            <option value="Music / Events">🎵 Music / Events</option>
+            <option value="Corporate">💼 Corporate</option>
+          </select>
+        </div>
+        <div class="bw-field">
+          <label>Brand Colors</label>
+          <div class="bw-colors">
+            <div class="bw-color">
+              <div class="bw-color-row">
+                <div class="bw-swatch" id="primary-swatch" style="background:#c9a84c">
+                  <input type="color" value="#c9a84c" oninput="setBuildColor('primary',this.value)">
+                </div>
+                <input type="text" class="bw-hex" id="primary-hex" value="#c9a84c" oninput="setBuildColorHex('primary',this.value)" placeholder="Primary">
+              </div>
+              <div style="font-size:9px;color:var(--fg4);margin-top:3px;font-family:monospace">Primary</div>
+            </div>
+            <div class="bw-color">
+              <div class="bw-color-row">
+                <div class="bw-swatch" id="secondary-swatch" style="background:#121212">
+                  <input type="color" value="#121212" oninput="setBuildColor('secondary',this.value)">
+                </div>
+                <input type="text" class="bw-hex" id="secondary-hex" value="#121212" oninput="setBuildColorHex('secondary',this.value)" placeholder="Secondary">
+              </div>
+              <div style="font-size:9px;color:var(--fg4);margin-top:3px;font-family:monospace">Secondary</div>
+            </div>
+          </div>
+        </div>
+        <div class="bw-div"></div>
+        <div class="bw-field">
+          <label>Sections</label>
+          <div id="bw-section-list"></div>
+        </div>
+        <button class="bw-generate" id="bw-gen-btn" onclick="generateSite()" disabled>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Generate Site
+        </button>
+        <div class="bw-div"></div>
+        <div class="bw-projects-label">Saved Projects</div>
+        <div id="bw-projects-list"></div>
+        <button onclick="saveCurrentProject()" style="width:100%;padding:7px;border:1px dashed var(--border2);border-radius:var(--r);font-size:11px;color:var(--fg4);transition:.12s;margin-top:4px" onmouseover="this.style.borderColor='var(--gold-dim)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--fg4)'">
+          + Save Current Project
+        </button>
+      </div>
+    </div>
+
+    <!-- ── MAIN ─────────────────────────────────────────────────────────── -->
+    <main id="main">
+      <div id="toolbar">
+        <span class="tb-count" id="comp-count">Loading…</span>
+        <div class="tb-right">
+          <div class="tb-view">
+            <button class="tb-view-btn" onclick="setViewSize('sm',this)" title="Small">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="4" height="4"/><rect x="10" y="3" width="4" height="4"/><rect x="17" y="3" width="4" height="4"/><rect x="3" y="10" width="4" height="4"/><rect x="10" y="10" width="4" height="4"/><rect x="17" y="10" width="4" height="4"/></svg>
+            </button>
+            <button class="tb-view-btn active" onclick="setViewSize('md',this)" title="Medium">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="8"/><rect x="13" y="3" width="8" height="8"/><rect x="3" y="13" width="8" height="8"/><rect x="13" y="13" width="8" height="8"/></svg>
+            </button>
+            <button class="tb-view-btn" onclick="setViewSize('lg',this)" title="Large">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="5"/><rect x="2" y="10" width="20" height="5"/><rect x="2" y="17" width="20" height="5"/></svg>
+            </button>
+          </div>
+          <select class="tb-sort" id="sort-select" onchange="setSort(this.value)">
+            <option value="default">Default order</option>
+            <option value="name">Name A–Z</option>
+            <option value="source">By Source</option>
+          </select>
+        </div>
       </div>
 
-      <!-- GRID VIEW -->
-      <div class="grid-wrap" id="gridWrap">
-        <div class="drop-zone" id="dropZone">
-          <div style="font-size:2.5rem">📦</div>
-          <div style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:var(--gold)">Drop JSON to import</div>
-        </div>
-        <div class="comp-grid" id="grid"></div>
+      <!-- Guide view -->
+      <div id="guide-view" class="scroll" style="display:none;flex:1">
+        <div id="guide-wrap"></div>
       </div>
 
-      <!-- GUIDE VIEW (hidden by default) -->
-      <div class="guide-wrap" id="guideWrap" style="display:none"></div>
+      <!-- Component grid -->
+      <div id="grid-wrap" style="flex:1">
+        <div class="loading-grid" id="loading-state" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr))">
+          <div class="loading-card" style="animation-delay:0ms"><div class="loading-preview"></div><div class="loading-foot"><div class="loading-bar" style="width:60%"></div></div></div>
+          <div class="loading-card" style="animation-delay:50ms"><div class="loading-preview"></div><div class="loading-foot"><div class="loading-bar" style="width:45%"></div></div></div>
+          <div class="loading-card" style="animation-delay:100ms"><div class="loading-preview"></div><div class="loading-foot"><div class="loading-bar" style="width:70%"></div></div></div>
+          <div class="loading-card" style="animation-delay:150ms"><div class="loading-preview"></div><div class="loading-foot"><div class="loading-bar" style="width:50%"></div></div></div>
+          <div class="loading-card" style="animation-delay:200ms"><div class="loading-preview"></div><div class="loading-foot"><div class="loading-bar" style="width:65%"></div></div></div>
+          <div class="loading-card" style="animation-delay:250ms"><div class="loading-preview"></div><div class="loading-foot"><div class="loading-bar" style="width:40%"></div></div></div>
+        </div>
+        <div id="comp-grid" style="display:none;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))"></div>
+        <div id="empty-state" style="display:none" class="empty-state">
+          <div class="empty-icon">∅</div>
+          <div class="empty-title">No components found</div>
+          <div class="empty-sub">Try a different filter or add your own with the + Add button.</div>
+        </div>
+      </div>
     </main>
   </div>
-</div>
 
-<!-- CODE MODAL -->
-<div class="modal-bg" id="codeModal" onclick="closeBg(event,'codeModal')">
-  <div class="modal">
-    <div class="modal-head">
-      <div class="modal-name" id="modalName"></div>
-      <span id="modalBadge"></span>
-      <button class="m-tab active" id="tabCode"    onclick="switchTab('code')">Code</button>
-      <button class="m-tab"        id="tabPreview" onclick="switchTab('preview')">Preview</button>
-      <button class="copy-btn" id="copyBtn" onclick="copyCode()">Copy</button>
-      <button class="x-btn" onclick="closeModal('codeModal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="code-panel"   id="codePanel"><pre id="codeContent"></pre></div>
-      <div class="preview-panel" id="previewPanel" style="display:none"><iframe id="previewFrame" sandbox="allow-scripts allow-same-origin"></iframe></div>
-    </div>
-  </div>
-</div>
-
-<!-- SETTINGS MODAL -->
-<div class="modal-bg" id="settingsModal" onclick="closeBg(event,'settingsModal')">
-  <div class="settings-modal">
-    <div class="modal-head">
-      <div class="modal-name">⚙ GitHub Settings</div>
-      <button class="x-btn" onclick="closeModal('settingsModal')">✕</button>
-    </div>
-    <div class="s-body">
-      <div style="font-size:12px;color:var(--t2);line-height:1.7;padding:10px 12px;background:var(--bg);border:1px solid var(--b1)">Connect your library to GitHub — components sync across every device automatically.</div>
-      <div class="field"><label>GitHub Username</label><input type="text" id="gh-owner" placeholder="yourusername"></div>
-      <div class="field"><label>Repository Name</label><input type="text" id="gh-repo" placeholder="fargo-design-library">
-        <div class="field-hint">Create at <a href="https://github.com/new" target="_blank">github.com/new</a></div></div>
-      <div class="field"><label>Personal Access Token</label><input type="password" id="gh-token" placeholder="ghp_...">
-        <div class="field-hint">Get at <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a> — needs <strong style="color:var(--gold)">repo</strong> scope</div></div>
-      <div id="s-test-result" class="s-test"></div>
-      <div class="s-footer">
-        <button onclick="testConnection()" style="border:1px solid var(--b2);color:var(--t2);background:none">Test</button>
-        <button onclick="saveSettings()" style="background:var(--gold);color:#000">Save & Connect</button>
+  <!-- ── CODE MODAL ─────────────────────────────────────────────────────── -->
+  <div class="modal-overlay" id="code-modal" onclick="closeCodeModal(event)">
+    <div class="modal-box">
+      <div class="modal-head">
+        <span class="modal-title" id="modal-name"></span>
+        <span id="modal-stack-badge" class="c-stack-badge"></span>
+        <div class="modal-tabs">
+          <button class="modal-tab active" onclick="setModalTab('preview',this)">Preview</button>
+          <button class="modal-tab" onclick="setModalTab('code',this)">Code</button>
+        </div>
+        <button class="modal-copy" id="modal-copy-btn" onclick="copyModalCode()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy
+        </button>
+        <button class="modal-close" onclick="closeCodeModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body" style="height:calc(90vh - 48px)">
+        <div id="modal-preview-pane" class="modal-preview fargo-grid" style="height:100%">
+          <iframe id="modal-iframe" sandbox="allow-scripts" style="width:100%;height:100%;border:none;background:#0b0b0b"></iframe>
+        </div>
+        <div id="modal-code-pane" class="modal-code" style="display:none;height:100%">
+          <code id="modal-code-content"></code>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- ADD MODAL -->
-<div class="modal-bg" id="addModal" onclick="closeBg(event,'addModal')">
-  <div class="add-modal">
-    <div class="modal-head">
-      <div class="modal-name">Add Component</div>
-      <button class="x-btn" onclick="closeModal('addModal')">✕</button>
-    </div>
-    <div class="add-body">
-      <div class="form-row">
-        <div><label class="fl">Name</label><input type="text" id="addName" placeholder="e.g. Glassmorphism Card"></div>
-        <div><label class="fl">Category</label>
-          <select id="addCat">
-            <option value="custom">My Own</option>
-            <option value="backgrounds">Backgrounds</option>
-            <option value="cards">Cards & UI</option>
-            <option value="animation">Animation</option>
-            <option value="text">Text Effects</option>
-            <option value="buttons">Buttons & CTA</option>
-            <option value="navigation">Navigation</option>
-            <option value="layouts">Layouts</option>
-            <option value="galleries">Galleries</option>
-            <option value="forms">Forms & Inputs</option>
-          </select></div>
+  <!-- ── ADD COMPONENT MODAL ────────────────────────────────────────────── -->
+  <div class="modal-overlay" id="add-modal" onclick="if(event.target===this)closeModal('add-modal')">
+    <div class="sm-modal-box">
+      <div class="sm-modal-head">
+        <span class="sm-modal-title">Add Component</span>
+        <button class="modal-close" onclick="closeModal('add-modal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       </div>
-      <div><label class="fl">Tags</label><input type="text" id="addTags" placeholder="CSS, Hover, Dark"></div>
-      <div><label class="fl">Stack</label>
-        <select id="addStack">
-          <option value="css">CSS Only</option>
-          <option value="tailwind">Tailwind</option>
-          <option value="react">React</option>
-          <option value="js">Vanilla JS</option>
-        </select></div>
-      <div><label class="fl">Full HTML Code</label><textarea id="addCode" style="height:160px;font-size:11px;font-family:'JetBrains Mono',monospace" placeholder="<!DOCTYPE html>..."></textarea></div>
-      <div style="display:flex;gap:8px;justify-content:flex-end">
-        <button onclick="closeModal('addModal')" style="padding:7px 16px;border:1px solid var(--b2);color:var(--t2);font-size:12px">Cancel</button>
-        <button onclick="saveComponent()" style="padding:7px 20px;background:var(--gold);color:#000;font-size:12px;font-weight:700">Save</button>
+      <div class="sm-modal-body">
+        <div class="sm-grid-2">
+          <div class="sm-field"><label class="sm-label">Name</label><input class="sm-input" id="add-name" placeholder="My Component"></div>
+          <div class="sm-field">
+            <label class="sm-label">Category</label>
+            <select class="sm-input" id="add-cat">
+              <option value="backgrounds">Backgrounds</option>
+              <option value="cards">Cards & UI</option>
+              <option value="animation">Animation</option>
+              <option value="text">Text Effects</option>
+              <option value="buttons">Buttons & CTA</option>
+              <option value="navigation">Navigation</option>
+              <option value="layouts">Layouts</option>
+              <option value="galleries">Galleries</option>
+              <option value="forms">Forms & Inputs</option>
+              <option value="custom" selected>My Own</option>
+            </select>
+          </div>
+          <div class="sm-field"><label class="sm-label">Tags (comma separated)</label><input class="sm-input" id="add-tags" placeholder="hero, dark, CSS"></div>
+          <div class="sm-field">
+            <label class="sm-label">Stack</label>
+            <select class="sm-input" id="add-stack">
+              <option>CSS</option><option>Tailwind</option><option>React</option><option>JS</option>
+            </select>
+          </div>
+        </div>
+        <div class="sm-field">
+          <label class="sm-label">Code</label>
+          <textarea class="sm-input" id="add-code" rows="7" style="resize:vertical;font-family:'JetBrains Mono',monospace;font-size:12px" placeholder="<button class='btn'>Click me</button>&#10;<style>.btn{...}</style>"></textarea>
+        </div>
+        <div class="sm-actions">
+          <button class="sm-btn-cancel" onclick="closeModal('add-modal')">Cancel</button>
+          <button class="sm-btn-save" onclick="saveComponent()">Save Component</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<div class="toast" id="toast"></div>
+  <!-- ── SETTINGS MODAL ────────────────────────────────────────────────── -->
+  <div class="modal-overlay" id="settings-modal" onclick="if(event.target===this)closeModal('settings-modal')">
+    <div class="sm-modal-box">
+      <div class="sm-modal-head">
+        <span class="sm-modal-title">Settings</span>
+        <button class="modal-close" onclick="closeModal('settings-modal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <div class="sm-modal-body">
+        <div id="settings-status" class="sm-status-ok" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          <span id="settings-status-text">Connected</span>
+        </div>
+        <div class="sm-field"><label class="sm-label">GitHub Username</label><input class="sm-input" id="s-owner" placeholder="2twofargo"></div>
+        <div class="sm-field"><label class="sm-label">Repository</label><input class="sm-input" id="s-repo" placeholder="fargo-design-library"></div>
+        <div class="sm-field"><label class="sm-label">Access Token</label><input class="sm-input" id="s-token" type="password" placeholder="ghp_••••••••••••"></div>
+        <div class="sm-actions">
+          <button class="sm-btn-cancel" onclick="testGitHubConnection()">Test Connection</button>
+          <button class="sm-btn-save" onclick="saveSettings()">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DROP OVERLAY ──────────────────────────────────────────────────── -->
+  <div id="drop-overlay">
+    <div class="drop-box">
+      <h3>Drop JSON to import</h3>
+      <p>Add components to your library</p>
+    </div>
+  </div>
+
+  <!-- ── TOASTS ─────────────────────────────────────────────────────────── -->
+  <div id="toast-container"></div>
+  <input type="file" id="file-input" accept=".json,application/json" style="display:none" onchange="handleFileInput(this)">
+</div>
 
 <script>
-// ── BUILT-IN COMPONENTS ──────────────────────────────────────────────────────
-const BUILT_IN = [
-  {id:'bi-1',name:'Aurora Background',category:'backgrounds',tags:['CSS','Animation','Dark'],stack:'css',source:'Built-in',desc:'Animated gradient blobs create a glowing aurora effect.',
-   code:`<!DOCTYPE html><html><head><style>*{margin:0;padding:0;box-sizing:border-box}body{background:#080808;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;font-family:sans-serif}.blob{position:absolute;border-radius:50%;filter:blur(80px);animation:drift 6s ease-in-out infinite alternate}.b1{width:400px;height:400px;background:rgba(120,40,200,.5);top:-100px;left:-100px}.b2{width:350px;height:350px;background:rgba(40,120,255,.4);top:50%;right:-80px;animation-delay:-2s}.b3{width:300px;height:300px;background:rgba(200,80,120,.3);bottom:-80px;left:30%;animation-delay:-4s}@keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(30px,40px) scale(1.1)}}h1{position:relative;z-index:1;color:#fff;font-size:3rem;font-weight:800;letter-spacing:-2px}span{background:linear-gradient(135deg,#a78bfa,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}</style></head><body><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><h1>Aurora <span>Effect</span></h1></body></html>`},
-  {id:'bi-2',name:'3D Tilt Card',category:'cards',tags:['JS','3D','Interactive'],stack:'js',source:'Built-in',desc:'Card tilts in 3D with cursor glow.',
-   code:`<!DOCTYPE html><html><head><style>*{margin:0;padding:0;box-sizing:border-box}body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0a0a0a;font-family:sans-serif;perspective:1000px;gap:20px}.card{width:220px;height:300px;background:linear-gradient(145deg,#161624,#0e0e1e);border:1px solid rgba(255,255,255,.08);padding:24px;cursor:pointer;transition:transform .12s;position:relative;overflow:hidden}.glow{position:absolute;width:180px;height:180px;border-radius:50%;background:rgba(201,168,76,.2);filter:blur(35px);pointer-events:none;transform:translate(-50%,-50%);opacity:0;transition:.3s}.icon{font-size:1.8rem;margin-bottom:14px;position:relative;z-index:1}h3{color:#fff;font-size:.95rem;font-weight:700;margin-bottom:7px;position:relative;z-index:1}p{color:rgba(255,255,255,.45);font-size:.75rem;line-height:1.6;position:relative;z-index:1}.badge{display:inline-block;margin-top:14px;padding:3px 10px;border:1px solid rgba(201,168,76,.35);color:#c9a84c;font-size:.65rem;letter-spacing:1.5px;text-transform:uppercase;position:relative;z-index:1}</style><script>function init(c){const g=c.querySelector('.glow');c.addEventListener('mousemove',e=>{const r=c.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;c.style.transform='rotateX('+(-(y-r.height/2)/12)+'deg) rotateY('+((x-r.width/2)/12)+'deg) scale(1.04)';g.style.left=x+'px';g.style.top=y+'px';g.style.opacity='1'});c.addEventListener('mouseleave',()=>{c.style.transform='';g.style.opacity='0'})}window.addEventListener('DOMContentLoaded',()=>document.querySelectorAll('.card').forEach(init));<\/script></head><body><div class="card"><div class="glow"></div><div class="icon">⚡</div><h3>3D Tilt Card</h3><p>Mouse drives rotateX/Y. Radial glow follows cursor.</p><div class="badge">Hover Me</div></div><div class="card"><div class="glow"></div><div class="icon">🎬</div><h3>Film Director</h3><p>Works on any element. Reuse the init() function anywhere.</p><div class="badge">Hover Me</div></div></body></html>`},
-  {id:'bi-3',name:'Typewriter Hero',category:'text',tags:['JS','Animation','Hero'],stack:'js',source:'Built-in',desc:'Words type and delete in a loop.',
-   code:`<!DOCTYPE html><html><head><style>*{margin:0;padding:0;box-sizing:border-box}body{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#080808;font-family:sans-serif;color:#fff;text-align:center}.pre{font-size:.65rem;color:#444;letter-spacing:4px;text-transform:uppercase;margin-bottom:20px}h1{font-size:3.5rem;font-weight:900;letter-spacing:-3px;line-height:1}.tw{color:#c9a84c}.cursor{display:inline-block;width:3px;height:.85em;background:#c9a84c;animation:blink .65s step-end infinite;vertical-align:middle}@keyframes blink{50%{opacity:0}}.sub{color:#333;font-size:.75rem;margin-top:18px;letter-spacing:2px;text-transform:uppercase}</style><script>const words=['Developer','Filmmaker','Builder','Creator'];let wi=0,ci=0,del=false,paused=false;function type(){if(paused)return;const el=document.getElementById('t');const w=words[wi];if(!del){el.textContent=w.slice(0,++ci);if(ci===w.length){del=true;paused=true;setTimeout(()=>{paused=false;type()},1500);return}}else{el.textContent=w.slice(0,--ci);if(ci===0){del=false;wi=(wi+1)%words.length}}setTimeout(type,del?55:110)}window.addEventListener('DOMContentLoaded',type);<\/script></head><body><div class="pre">Kwadir Scott</div><h1>I am a <span class="tw" id="t"></span><span class="cursor"></span></h1><div class="sub">Philadelphia · Software · Film</div></body></html>`},
-  {id:'bi-4',name:'Particle Network',category:'backgrounds',tags:['Canvas','JS'],stack:'js',source:'Built-in',desc:'Connected particles respond to mouse.',
-   code:`<!DOCTYPE html><html><head><style>*{margin:0;padding:0;box-sizing:border-box}body{background:#050505;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;font-family:sans-serif}canvas{position:absolute;inset:0}.content{position:relative;z-index:1;text-align:center;color:#fff}h1{font-size:2.5rem;font-weight:800;letter-spacing:-1px;margin-bottom:8px}p{color:rgba(255,255,255,.3);font-size:.75rem;letter-spacing:3px;text-transform:uppercase}</style></head><body><canvas id="c"></canvas><div class="content"><h1>Particle Network</h1><p>Move your mouse</p></div><script>const c=document.getElementById('c');const ctx=c.getContext('2d');let W=c.width=window.innerWidth,H=c.height=window.innerHeight,mx=W/2,my=H/2;const pts=[];for(let i=0;i<90;i++)pts.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4});document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});function draw(){ctx.clearRect(0,0,W,H);pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;const dx=p.x-mx,dy=p.y-my,d=Math.sqrt(dx*dx+dy*dy);ctx.beginPath();ctx.arc(p.x,p.y,d<150?2.5:1,0,Math.PI*2);ctx.fillStyle=d<150?'rgba(201,168,76,.9)':'rgba(255,255,255,.2)';ctx.fill();pts.forEach(q=>{const d2=Math.sqrt((p.x-q.x)**2+(p.y-q.y)**2);if(d2<110){ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);ctx.strokeStyle='rgba(201,168,76,'+(1-d2/110)*.12+')';ctx.lineWidth=.8;ctx.stroke()}})});requestAnimationFrame(draw)}draw();window.addEventListener('resize',()=>{W=c.width=window.innerWidth;H=c.height=window.innerHeight});<\/script></body></html>`},
-  {id:'bi-5',name:'Magnetic Button',category:'buttons',tags:['JS','Interaction'],stack:'js',source:'Built-in',desc:'Button follows mouse, gold fill on hover.',
-   code:`<!DOCTYPE html><html><head><style>*{margin:0;padding:0;box-sizing:border-box}body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#050505;font-family:sans-serif;gap:24px;flex-wrap:wrap}.wrap{position:relative;display:inline-block}.btn{display:block;padding:14px 38px;background:transparent;border:1px solid rgba(255,255,255,.2);color:#fff;font-size:.85rem;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:border-color .3s,transform .12s ease-out;position:relative;overflow:hidden;font-weight:600}.btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#c9a84c,#ff6b00);opacity:0;transition:.3s;z-index:0}.btn:hover{border-color:transparent}.btn:hover::before{opacity:1}.btn span{position:relative;z-index:1;transition:color .3s}.btn:hover span{color:#000}</style><script>document.querySelectorAll('.wrap').forEach(w=>{const b=w.querySelector('.btn');w.addEventListener('mousemove',e=>{const r=w.getBoundingClientRect(),x=(e.clientX-r.left-r.width/2)*.38,y=(e.clientY-r.top-r.height/2)*.38;b.style.transform='translate('+x+'px,'+y+'px)'});w.addEventListener('mouseleave',()=>b.style.transform='')});<\/script></head><body><div class="wrap"><button class="btn"><span>Gold Magnetic</span></button></div><div class="wrap"><button class="btn" style="border-color:rgba(168,85,247,.3)"><span>Purple Magnetic</span></button></div></body></html>`},
-  {id:'bi-6',name:'Scrolling Marquee',category:'text',tags:['CSS','Loop'],stack:'css',source:'Built-in',desc:'Two rows scrolling in opposite directions.',
-   code:`<!DOCTYPE html><html><head><style>*{margin:0;padding:0;box-sizing:border-box}body{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#080808;overflow:hidden}.track{width:100%;overflow:hidden;border-top:1px solid #1a1a1a;border-bottom:1px solid #1a1a1a;padding:13px 0}.track+.track{border-top:none;margin-top:10px}.inner{display:flex;width:max-content;animation:scroll 18s linear infinite}.track.rev .inner{animation-direction:reverse}@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}.item{font-size:1rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;white-space:nowrap;color:rgba(255,255,255,.5);padding:0 28px}.item.hi{color:#c9a84c}.dot{color:#1e1e1e;padding:0 4px}</style></head><body><div style="flex:1"></div><div class="track"><div class="inner"><span class="item hi">Film Direction</span><span class="dot">✦</span><span class="item">Software Dev</span><span class="dot">✦</span><span class="item hi">Philadelphia</span><span class="dot">✦</span><span class="item">Brand Identity</span><span class="dot">✦</span><span class="item hi">Video Production</span><span class="dot">✦</span><span class="item">Web Design</span><span class="dot">✦</span><span class="item hi">Film Direction</span><span class="dot">✦</span><span class="item">Software Dev</span><span class="dot">✦</span><span class="item hi">Philadelphia</span><span class="dot">✦</span><span class="item">Brand Identity</span><span class="dot">✦</span><span class="item hi">Video Production</span><span class="dot">✦</span><span class="item">Web Design</span><span class="dot">✦</span></div></div><div class="track rev"><div class="inner"><span class="item">Event Production</span><span class="dot">★</span><span class="item hi">Grandioso</span><span class="dot">★</span><span class="item">Photography</span><span class="dot">★</span><span class="item hi">Community</span><span class="dot">★</span><span class="item">Creative Direction</span><span class="dot">★</span><span class="item hi">Hunting Park</span><span class="dot">★</span><span class="item">Event Production</span><span class="dot">★</span><span class="item hi">Grandioso</span><span class="dot">★</span><span class="item">Photography</span><span class="dot">★</span><span class="item hi">Community</span><span class="dot">★</span><span class="item">Creative Direction</span><span class="dot">★</span><span class="item hi">Hunting Park</span><span class="dot">★</span></div></div><div style="flex:1"></div></body></html>`},
-  {id:'bi-7',name:'Glassmorphism Cards',category:'cards',tags:['CSS','Glass'],stack:'css',source:'Built-in',desc:'Frosted glass over gradient.',
-   code:`<!DOCTYPE html><html><head><style>*{margin:0;padding:0;box-sizing:border-box}body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a0533,#0d1b4b);font-family:sans-serif;gap:20px;flex-wrap:wrap;padding:40px}.card{background:rgba(255,255,255,.07);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.12);padding:28px;width:230px;transition:.25s;cursor:pointer}.card:hover{background:rgba(255,255,255,.11);transform:translateY(-4px)}.tag{font-size:9px;color:rgba(255,255,255,.4);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}h2{color:#fff;font-size:1.1rem;margin-bottom:7px;font-weight:700}p{color:rgba(255,255,255,.5);font-size:.78rem;line-height:1.65;margin-bottom:18px}.btn{display:inline-block;padding:7px 18px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.8);font-size:.72rem;cursor:pointer}</style></head><body><div class="card"><div class="tag">Design System</div><h2>Glassmorphism</h2><p>backdrop-filter creates frosted glass over gradients. Pure CSS.</p><div class="btn">Learn More</div></div><div class="card"><div class="tag">Component</div><h2>Frosted Layer</h2><p>Layer multiple glass cards at different depths for visual hierarchy.</p><div class="btn">Explore</div></div></body></html>`},
-  {id:'bi-8',name:'Glitch Text',category:'text',tags:['CSS','Animation'],stack:'css',source:'Built-in',desc:'Chromatic aberration glitch effect.',
-   code:`<!DOCTYPE html><html><head><style>*{margin:0;padding:0;box-sizing:border-box}body{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#050505;font-family:'Courier New',monospace;gap:16px}.glitch{font-size:5rem;font-weight:900;color:#fff;position:relative;letter-spacing:-3px;cursor:default;user-select:none}.glitch::before,.glitch::after{content:attr(data-text);position:absolute;top:0;left:0;width:100%;height:100%}.glitch::before{color:#0ff;clip-path:polygon(0 25%,100% 25%,100% 45%,0 45%);animation:g1 3s infinite linear;opacity:.85}.glitch::after{color:#f0f;clip-path:polygon(0 60%,100% 60%,100% 80%,0 80%);animation:g2 2.5s infinite linear;opacity:.85}@keyframes g1{0%,88%,100%{transform:translate(0)}90%{transform:translate(-5px,2px)}94%{transform:translate(5px,-1px)}}@keyframes g2{0%,86%,100%{transform:translate(0)}88%{transform:translate(4px,1px)}92%{transform:translate(-4px,-2px)}}.sub{font-size:.75rem;color:#333;letter-spacing:4px;text-transform:uppercase;font-family:sans-serif}</style></head><body><div class="glitch" data-text="GLITCH">GLITCH</div><div class="sub">Chromatic Aberration Effect</div></body></html>`},
+// ── DATA ──────────────────────────────────────────────────────────────────────
+const PUBLIC_URL = 'https://raw.githubusercontent.com/2twofargo/fargo-design-library/main/fargo-library.json';
+const STACK_META = {
+  CSS:     { border:'#5b9dd9', text:'#7fb8ec' },
+  Tailwind:{ border:'#38bdf8', text:'#60cffb' },
+  React:   { border:'#22d3ee', text:'#4fe0f2' },
+  JS:      { border:'#e0c04a', text:'#f0d873' },
+};
+const VIEW_SIZES = { sm:220, md:280, lg:360 };
+const CLIENT_SECTIONS = {
+  'Artist':           [{id:'hero',label:'Hero',cats:['backgrounds','layouts','text']},{id:'music',label:'Music',cats:['galleries','animation','cards']},{id:'gallery',label:'Gallery',cats:['galleries','cards']},{id:'about',label:'About',cats:['cards','text','layouts']},{id:'contact',label:'Contact',cats:['forms','buttons','layouts']}],
+  'Nonprofit':        [{id:'hero',label:'Hero',cats:['backgrounds','layouts','text']},{id:'impact',label:'Impact',cats:['cards','layouts','animation']},{id:'donate',label:'Donate',cats:['buttons','forms','cards']},{id:'events',label:'Events',cats:['layouts','cards']},{id:'contact',label:'Contact',cats:['forms','buttons','layouts']}],
+  'Restaurant':       [{id:'hero',label:'Hero',cats:['backgrounds','layouts','text']},{id:'menu',label:'Menu',cats:['layouts','cards','forms']},{id:'gallery',label:'Gallery',cats:['galleries','cards']},{id:'about',label:'About',cats:['cards','text','layouts']},{id:'contact',label:'Contact',cats:['forms','buttons','layouts']}],
+  'Service Business': [{id:'hero',label:'Hero',cats:['backgrounds','layouts','text']},{id:'services',label:'Services',cats:['cards','layouts']},{id:'process',label:'Process',cats:['layouts','animation','cards']},{id:'testimonials',label:'Testimonials',cats:['cards']},{id:'contact',label:'Contact',cats:['forms','buttons','layouts']}],
+  'E-Commerce':       [{id:'hero',label:'Hero',cats:['backgrounds','layouts','text']},{id:'products',label:'Products',cats:['cards','galleries']},{id:'about',label:'About',cats:['cards','text','layouts']},{id:'reviews',label:'Reviews',cats:['cards']},{id:'contact',label:'Contact',cats:['forms','buttons','layouts']}],
+  'Music / Events':   [{id:'hero',label:'Hero',cats:['backgrounds','layouts','text']},{id:'events',label:'Events',cats:['layouts','cards']},{id:'gallery',label:'Gallery',cats:['galleries','cards']},{id:'about',label:'About',cats:['cards','text','layouts']},{id:'contact',label:'Contact',cats:['forms','buttons','layouts']}],
+  'Corporate':        [{id:'hero',label:'Hero',cats:['backgrounds','layouts','text']},{id:'services',label:'Services',cats:['cards','layouts']},{id:'team',label:'Team',cats:['cards']},{id:'testimonials',label:'Testimonials',cats:['cards']},{id:'contact',label:'Contact',cats:['forms','buttons','layouts']}],
+};
+const NL_MAPPINGS = [
+  {phrases:['hero','landing','banner'],cats:['backgrounds','layouts','text']},
+  {phrases:['music','audio','spotify','player'],cats:['galleries','animation','cards']},
+  {phrases:['menu','food','restaurant'],cats:['layouts','cards','forms']},
+  {phrases:['donate','donation','nonprofit','charity'],cats:['layouts','cards','forms']},
+  {phrases:['contact','form','email'],cats:['forms','buttons','layouts']},
+  {phrases:['gallery','photo','portfolio','masonry'],cats:['galleries']},
+  {phrases:['loader','spinner','loading','animation'],cats:['animation']},
+  {phrases:['glass','glassmorphism','blur'],cats:['cards','backgrounds']},
+  {phrases:['gradient','background','particle','wave'],cats:['backgrounds']},
+  {phrases:['button','cta','action'],cats:['buttons']},
+  {phrases:['nav','navbar','navigation','menu'],cats:['navigation']},
+  {phrases:['card','profile','pricing'],cats:['cards']},
+  {phrases:['text','heading','typewriter','glitch'],cats:['text']},
+];
+const CLIENT_TYPES_DATA = [
+  {id:'artist',emoji:'🎨',name:'Artist / Creative',description:'Painters, photographers, and designers who need a portfolio that feels like an extension of their work.',needs:['Hero','Gallery','About','Contact','Store'],edge:'Pixel-level control over layout and motion — a gallery that behaves exactly how the artist imagines, not a template.'},
+  {id:'nonprofit',emoji:'🕊️',name:'Nonprofit',description:'Mission-driven organizations that need to tell a story and convert visitors into donors and volunteers.',needs:['Hero','Impact Stats','Donation CTA','Events','Newsletter'],edge:'Custom donation flows with zero per-transaction platform tax — every dollar goes further.'},
+  {id:'restaurant',emoji:'🍽️',name:'Restaurant',description:'Local spots that need a menu, reservations, and mouth-watering visuals that load instantly on a phone.',needs:['Hero','Menu','Gallery','Reservations','Map'],edge:'Menu updates in seconds and pages that load under a second — no clunky Wix reservation widget.'},
+  {id:'ecommerce',emoji:'🛍️',name:'E-Commerce',description:'Independent shops that want a storefront with personality instead of another cookie-cutter Shopify theme.',needs:['Hero','Product Grid','Cart','Checkout','Reviews'],edge:'A checkout you own end-to-end — no 2% platform fees, no locked-in theme engine.'},
+  {id:'service',emoji:'🔧',name:'Service Business',description:'Plumbers, lawyers, agencies — trust-first sites that book calls and rank locally.',needs:['Hero','Services','Testimonials','Booking','Contact'],edge:'Lightning-fast local SEO and lead forms that pipe straight into their inbox or CRM.'},
+  {id:'music',emoji:'🎵',name:'Music / Events',description:'Musicians and venues that need tour dates, an audio player, and ticket links front and center.',needs:['Hero','Player','Tour Dates','Gallery','Merch'],edge:'An embedded player and animated tour list that no drag-and-drop builder can match.'},
+];
+const PLATFORM_ADV = [
+  {title:'Payment Processing',body:'Direct Stripe integration with no platform middleman skimming a percentage off every sale.'},
+  {title:'Design Control',body:'Every pixel is intentional. No fighting a theme editor to move a button three pixels left.'},
+  {title:'Performance',body:'Hand-tuned, sub-second loads. Platform builders ship megabytes of bloat you can\'t remove.'},
+  {title:'Integrations',body:'Wire in any API — CRM, booking, analytics — without waiting for an app-store plugin.'},
+  {title:'SEO',body:'Clean semantic markup and full control of metadata, sitemaps, and structured data.'},
+  {title:'Ownership',body:'The client owns the code and the hosting. No monthly ransom to keep their site online.'},
 ];
 
-// ── GUIDE DATA ───────────────────────────────────────────────────────────────
-const GUIDE_DATA = {
-  all: {
-    title: 'Client Type Guide',
-    intro: 'Every client type needs different components. Use this guide to quickly know what to build before you start. Select a client type on the left to see a detailed breakdown.',
-    cards: [
-      { icon:'🎨', title:'Artist / Creative', desc:'Portfolio-first. Every pixel needs to showcase the work. Design should disappear behind the art.', needs:['Full-screen hero','Portfolio gallery','Contact form','Bio section','Social links'], edge:'You can build custom gallery layouts Squarespace can never do — no grid constraints, no template limits.' },
-      { icon:'💚', title:'Nonprofit', desc:'Mission-driven. Conversion is a donation, volunteer signup, or program enrollment — not a purchase.', needs:['Mission hero','Donation CTA','Impact stats','Program pages','Newsletter','Event calendar'], edge:'You can build a fully custom donation system with Stripe — no 3-5% platform fees eating into their donations.' },
-      { icon:'🍕', title:'Restaurant / Food', desc:'Appetite first. People eat with their eyes before they eat with their mouth. Photography is everything.', needs:['Food photo hero','Menu display','Reservation link','Hours & location','Gallery','Reviews'], edge:'Custom menu with real filters, dietary tags, and seasonal updates — no Yelp dependency or third-party menu builders.' },
-      { icon:'🛍️', title:'E-Commerce', desc:'Every element leads to the cart. Trust, simplicity, and speed drive conversion.', needs:['Product grid','Cart system','Checkout','Payment integration','Product detail','Search & filter'], edge:'Accept any payment processor. Build custom product logic. No Shopify monthly fees or 2% transaction surcharges.' },
-      { icon:'🏢', title:'Service Business', desc:'Trust and authority first. People hire people before they hire services.', needs:['Hero with CTA','Services list','Testimonials','Booking system','Team page','FAQ'], edge:'Custom booking system integrated directly with their calendar — no Calendly branding or per-booking fees.' },
-      { icon:'🎵', title:'Music / Events', desc:'Energy and atmosphere. The site should feel like the music sounds.', needs:['Hero video','Music player','Tour dates','Ticket sales','Gallery','Press kit'], edge:'Live ticket sales through Stripe — no Eventbrite 6-8% service fees. Money goes straight to the artist.' },
-    ]
-  },
-  vs: {
-    title: 'What You Do That Platforms Cannot',
-    intro: 'Every client who hires a web builder on Wix or Squarespace is limited by what the platform allows. You have no such limits. This is your edge.',
-    advantages: [
-      { icon:'💳', title:'Payment Processing', yours:['Any Stripe Connect setup — money goes direct','Zero platform transaction fees','Custom checkout flow matching brand','Subscriptions, one-time, donations — all in one','Apple Pay, Google Pay, crypto if needed'], theirs:['Shopify charges 0.5-2% per transaction on top of Stripe','Wix forces you to their own payment system','No custom checkout — stuck with their template','Limited subscription options'] },
-      { icon:'🎨', title:'Design Control', yours:['Pixel-perfect custom design — every element','GSAP animations, Three.js, WebGL, anything','Custom fonts, custom cursors, custom everything','Designs that literally cannot exist on any platform'], theirs:['Template-locked — can adjust colors and fonts only','No custom animations beyond basic fade/slide','\'Make it look like Apple\' — impossible on Squarespace','Recognizable template patterns undercut brand authority'] },
-      { icon:'⚡', title:'Performance', yours:['Optimized code — only what you need','Core Web Vitals score 90+','Sub-2 second load times achievable','No platform bloat, no shared server queues'], theirs:['Wix and Squarespace serve 100+ KB of platform code on every page','No control over server configuration','Shared hosting with thousands of sites'] },
-      { icon:'🔗', title:'Integrations', yours:['Connect to ANY API or service','Real-time features (live auctions, chat, streaming)','Custom CRM integration','Loyalty points, gamification, any custom logic'], theirs:['Only approved app marketplace integrations','No custom API connections','No real-time without paying for premium apps'] },
-      { icon:'📊', title:'SEO & Analytics', yours:['Complete server-side rendering control','Schema markup exactly as needed','Custom analytics — no data shared with platform','Full technical SEO access'], theirs:['Platform controls what gets indexed','Limited schema options','Analytics data owned by the platform'] },
-      { icon:'🔒', title:'Ownership & Cost', yours:['Own the code forever','Move hosts anytime — no lock-in','One-time build cost','Client pays you — not Squarespace $33/month forever'], theirs:['Lose your site if you stop paying monthly','Cannot export real code — just their proprietary format','Monthly fees forever: Shopify $39-399, Squarespace $23-65'] },
-    ]
-  }
-};
-
-// ── STATE ────────────────────────────────────────────────────────────────────
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let allComps = [];
 let custom = [];
-let allComps = [...BUILT_IN];
-let activeCat    = 'all';
-let activeSource = null;
-let activeStack  = 'all';
-let activeSort   = 'default';
-let activeView   = 'md';
-let searchQ      = '';
-let sidebarMode  = 'components';
-let activeModal  = null;
-let modalTab     = 'code';
-let favorites    = new Set();
-
-// GitHub config
-const GH = {
-  get owner()  { return localStorage.getItem('gh_owner') || ''; },
-  get repo()   { return localStorage.getItem('gh_repo')  || ''; },
-  get token()  { return localStorage.getItem('gh_token') || ''; },
-  get branch() { return localStorage.getItem('gh_branch')|| 'main'; },
-  configured() { return !!(this.owner && this.repo && this.token); },
-};
-
-// Load persisted data
-function loadPersisted() {
-  try { custom = JSON.parse(localStorage.getItem('fargo-custom') || '[]'); } catch(e) { custom = []; }
-  try { favorites = new Set(JSON.parse(localStorage.getItem('fargo-favs') || '[]')); } catch(e) {}
-  allComps = [...BUILT_IN, ...custom];
-}
-
-function savePersisted() {
-  try { localStorage.setItem('fargo-custom', JSON.stringify(custom)); } catch(e) {}
-}
-
-// ── GITHUB ───────────────────────────────────────────────────────────────────
-async function loadFromGitHub() {
-  if (!GH.configured()) return null;
-  try {
-    const url = `https://raw.githubusercontent.com/${GH.owner}/${GH.repo}/${GH.branch}/fargo-library.json?t=${Date.now()}`;
-    const res = await fetch(url);
-    if (!res.ok) return null;
-    const data = await res.json();
-    return data.components || [];
-  } catch(e) { return null; }
-}
-
-async function saveToGitHub(comps) {
-  if (!GH.configured()) return false;
-  setSyncStatus('busy', 'Syncing...');
-  try {
-    const payload = JSON.stringify({ version:'1.0', updated:new Date().toISOString(), count:comps.length, components:comps }, null, 2);
-    let sha = null;
-    try {
-      const m = await fetch(`https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/fargo-library.json`, { headers:{ 'Authorization':`Bearer ${GH.token}`, 'Accept':'application/vnd.github.v3+json' }});
-      if (m.ok) { const d = await m.json(); sha = d.sha; }
-    } catch(e) {}
-    const body = { message:`Update library (${comps.length} components)`, content:btoa(unescape(encodeURIComponent(payload))), branch:GH.branch, ...(sha?{sha}:{}) };
-    const res = await fetch(`https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/fargo-library.json`, { method:'PUT', headers:{ 'Authorization':`Bearer ${GH.token}`, 'Accept':'application/vnd.github.v3+json', 'Content-Type':'application/json'}, body:JSON.stringify(body) });
-    if (res.ok) { setSyncStatus('ok', `Synced · ${new Date().toLocaleTimeString()}`); return true; }
-    setSyncStatus('err', 'Sync failed'); return false;
-  } catch(e) { setSyncStatus('err', 'Error'); return false; }
-}
-
-function setSyncStatus(state, label) {
-  const dot = document.getElementById('syncDot');
-  const lbl = document.getElementById('syncLabel');
-  const btn = document.getElementById('syncBtn');
-  if (!dot) return;
-  dot.style.display = 'block'; lbl.style.display = 'block'; btn.style.display = 'flex';
-  dot.className = 'sync-dot ' + state; lbl.textContent = label;
-}
-
-async function syncToGitHub() {
-  if (!GH.configured()) { openSettings(); return; }
-  await saveToGitHub(allComps);
-}
-
-// ── FILTER & RENDER ──────────────────────────────────────────────────────────
-function getFiltered() {
-  let list = [...allComps];
-  if (activeSource) list = list.filter(c => (c.source||'').includes(activeSource));
-  if (activeCat !== 'all') list = list.filter(c => c.category === activeCat);
-  if (activeStack !== 'all') list = list.filter(c => (c.stack||inferStack(c)) === activeStack);
-  if (searchQ) {
-    const q = searchQ.toLowerCase();
-    list = list.filter(c =>
-      c.name.toLowerCase().includes(q) ||
-      (c.tags||[]).some(t=>t.toLowerCase().includes(q)) ||
-      (c.desc||'').toLowerCase().includes(q) ||
-      (c.source||'').toLowerCase().includes(q)
-    );
-  }
-  if (activeSort === 'alpha')      list.sort((a,b)=>a.name.localeCompare(b.name));
-  if (activeSort === 'alpha-desc') list.sort((a,b)=>b.name.localeCompare(a.name));
-  if (activeSort === 'cat')        list.sort((a,b)=>a.category.localeCompare(b.category));
-  return list;
-}
-
-function inferStack(c) {
-  if (!c.code) return 'css';
-  const code = c.code.toLowerCase();
-  if (code.includes('tailwind') || code.includes('tw-')) return 'tailwind';
-  if (code.includes('react') || code.includes('jsx') || code.includes('usestate')) return 'react';
-  if (code.includes('<script') && code.includes('function')) return 'js';
-  return 'css';
-}
-
-function stackBadge(c) {
-  const s = c.stack || inferStack(c);
-  const map = { css:'badge-css', tailwind:'badge-tailwind', react:'badge-react', js:'badge-js' };
-  const labels = { css:'CSS', tailwind:'Tailwind', react:'React', js:'JS' };
-  return `<span class="c-badge ${map[s]||'badge-default'}">${labels[s]||s}</span>`;
-}
-
-function updateCounts() {
-  const cats = ['backgrounds','cards','animation','text','buttons','navigation','layouts','galleries','forms','custom'];
-  document.getElementById('cnt-all').textContent = allComps.length;
-  cats.forEach(cat => {
-    const el = document.getElementById('cnt-'+cat);
-    if (el) el.textContent = allComps.filter(c=>c.category===cat).length;
-  });
-  // Source counts
-  const srcMap = { uiverse:'src-uiverse', Animista:'src-animista', 'Magic UI':'src-magicui', DaisyUI:'src-daisyui', Preline:'src-preline', FreeFrontend:'src-ff' };
-  Object.entries(srcMap).forEach(([src, id]) => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = allComps.filter(c=>(c.source||'').includes(src)).length;
-  });
-}
-
-function render() {
-  const filtered = getFiltered();
-  document.getElementById('count-display').textContent = filtered.length + ' component' + (filtered.length!==1?'s':'');
-
-  const grid = document.getElementById('grid');
-  if (!filtered.length) {
-    grid.innerHTML = `<div class="empty"><div class="empty-icon">◻</div><div>No components match</div></div>`;
-    return;
-  }
-
-  grid.innerHTML = filtered.map(c => {
-    const isFav = favorites.has(c.id);
-    const src = c.source ? `<div class="c-source-badge">${c.source}</div>` : '';
-    return `<div class="c-card">
-      <div class="c-preview" onclick="openCode('${c.id}')">
-        <iframe srcdoc="${esc(c.code)}" sandbox="allow-scripts" loading="lazy"></iframe>
-        ${src}
-        <button class="c-fav ${isFav?'starred':''}" onclick="toggleFav(event,'${c.id}')">${isFav?'★':'☆'}</button>
-        <div class="c-preview-overlay">
-          <button class="c-overlay-btn primary" onclick="event.stopPropagation();copyDirect('${c.id}')">Copy</button>
-          <button class="c-overlay-btn" onclick="openCode('${c.id}')">Code</button>
-        </div>
-      </div>
-      <div class="c-foot">
-        <div class="c-name">${c.name}</div>
-        ${stackBadge(c)}
-        <button class="c-code-btn" onclick="openCode('${c.id}')">&lt;/&gt;</button>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function esc(str) { return (str||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
-
-// ── INTERACTIONS ─────────────────────────────────────────────────────────────
-function selectCat(cat, btn) {
-  activeCat = cat; activeSource = null;
-  document.querySelectorAll('.sb-item[data-cat]').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.sb-item[data-source]').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  render();
-}
-
-function setSource(src, btn) {
-  activeSource = src; activeCat = 'all';
-  document.querySelectorAll('.sb-item[data-cat]').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.sb-item[data-source]').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  render();
-}
-
-function setStack(stack, btn) {
-  activeStack = stack;
-  document.querySelectorAll('.stack-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  render();
-}
-
-function setSort(val) { activeSort = val; render(); }
-
-function setView(v) {
-  activeView = v;
-  const grid = document.getElementById('grid');
-  grid.className = 'comp-grid ' + (v==='lg'?'view-lg':v==='sm'?'view-sm':'');
-  document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('active'));
-  event.currentTarget.classList.add('active');
-}
-
-function filterComponents() { searchQ = document.getElementById('search').value; renderComponents(); }
-
-function setSidebarMode(mode) {
-  sidebarMode = mode;
-  document.getElementById('modeComponents').classList.toggle('active', mode==='components');
-  document.getElementById('modeGuide').classList.toggle('active', mode==='guide');
-  document.getElementById('sbComponents').style.display = mode==='components' ? 'block' : 'none';
-  document.getElementById('sbGuide').style.display      = mode==='guide'       ? 'block' : 'none';
-  document.getElementById('gridWrap').style.display     = mode==='components' ? 'block' : 'none';
-  document.getElementById('guideWrap').style.display    = mode==='guide'       ? 'block' : 'none';
-  if (mode === 'guide') showGuide('all');
-}
-
-function showGuide(type) {
-  document.querySelectorAll('#sbGuide .sb-item').forEach(b=>b.classList.remove('active'));
-  event?.currentTarget?.classList?.add('active');
-  const wrap = document.getElementById('guideWrap');
-  if (type === 'vs') {
-    const d = GUIDE_DATA.vs;
-    wrap.innerHTML = `
-      <h2 style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:var(--t0);letter-spacing:-.5px;margin-bottom:8px">${d.title}</h2>
-      <p style="color:var(--t2);font-size:12.5px;line-height:1.75;margin-bottom:24px;max-width:680px">${d.intro}</p>
-      <div class="vs-grid">
-        ${d.advantages.map(a=>`
-          <div class="vs-card">
-            <h4>${a.icon} ${a.title}</h4>
-            <div style="font-size:10px;font-weight:700;color:var(--green);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px">You can</div>
-            <ul class="vs-list">${a.yours.map(i=>`<li>${i}</li>`).join('')}</ul>
-            <div style="font-size:10px;font-weight:700;color:var(--red);letter-spacing:1px;text-transform:uppercase;margin:10px 0 5px">Platforms cannot</div>
-            <ul class="vs-list">${a.theirs.map(i=>`<li class="no">${i}</li>`).join('')}</ul>
-          </div>`).join('')}
-      </div>`;
-    return;
-  }
-
-  const d = GUIDE_DATA.all;
-  const cards = type === 'all' ? d.cards : d.cards.filter(c=>c.title.toLowerCase().includes(type));
-  wrap.innerHTML = `
-    <h2 style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:var(--t0);letter-spacing:-.5px;margin-bottom:8px">${d.title}</h2>
-    <p style="color:var(--t2);font-size:12.5px;line-height:1.75;margin-bottom:24px;max-width:680px">${d.intro}</p>
-    <div class="guide-grid">
-      ${cards.map(c=>`
-        <div class="guide-card">
-          <h3>${c.icon} ${c.title}</h3>
-          <p>${c.desc}</p>
-          <div class="guide-needs">${c.needs.map(n=>`<span class="guide-need">${n}</span>`).join('')}</div>
-          <div class="guide-advantage"><strong>Your Edge:</strong> ${c.edge}</div>
-        </div>`).join('')}
-    </div>`;
-}
-
-// ── FAVORITES ────────────────────────────────────────────────────────────────
-function toggleFav(e, id) {
-  e.stopPropagation();
-  if (favorites.has(id)) favorites.delete(id); else favorites.add(id);
-  try { localStorage.setItem('fargo-favs', JSON.stringify([...favorites])); } catch(err) {}
-  render();
-}
-
-// ── COPY ─────────────────────────────────────────────────────────────────────
-function copyDirect(id) {
-  const c = allComps.find(x=>x.id===id);
-  if (!c) return;
-  navigator.clipboard.writeText(c.rawCode||c.code).then(()=>showToast('Copied!')).catch(()=>{
-    const ta=document.createElement('textarea');ta.value=c.rawCode||c.code;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast('Copied!');
-  });
-}
-
-// ── CODE MODAL ────────────────────────────────────────────────────────────────
-function openCode(id) {
-  const c = allComps.find(x=>x.id===id);
-  if (!c) return;
-  activeModal = id;
-  document.getElementById('modalName').textContent = c.name;
-  const badge = document.getElementById('modalBadge');
-  badge.innerHTML = stackBadge(c);
-  document.getElementById('codeContent').textContent = c.rawCode||c.code;
-  document.getElementById('previewFrame').srcdoc = c.code;
-  switchTab('code');
-  document.getElementById('codeModal').classList.add('open');
-}
-
-function switchTab(tab) {
-  modalTab = tab;
-  document.getElementById('tabCode').classList.toggle('active',tab==='code');
-  document.getElementById('tabPreview').classList.toggle('active',tab==='preview');
-  document.getElementById('codePanel').style.display    = tab==='code'    ? 'block':'none';
-  document.getElementById('previewPanel').style.display = tab==='preview' ? 'block':'none';
-}
-
-function copyCode() {
-  const c = allComps.find(x=>x.id===activeModal);
-  if (!c) return;
-  navigator.clipboard.writeText(c.rawCode||c.code).then(()=>{
-    document.getElementById('copyBtn').textContent='✓ Copied!';
-    showToast('Copied to clipboard');
-    setTimeout(()=>document.getElementById('copyBtn').textContent='Copy',2000);
-  }).catch(()=>{
-    const ta=document.createElement('textarea');ta.value=c.rawCode||c.code;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast('Copied!');
-  });
-}
-
-// ── ADD COMPONENT ─────────────────────────────────────────────────────────────
-function openAddModal() { document.getElementById('addModal').classList.add('open'); }
-
-function saveComponent() {
-  const name=document.getElementById('addName').value.trim();
-  const code=document.getElementById('addCode').value.trim();
-  if(!name||!code){showToast('Name and code required',true);return;}
-  const c={
-    id:'custom-'+Date.now(), name,
-    category:document.getElementById('addCat').value||'custom',
-    tags:document.getElementById('addTags').value.split(',').map(t=>t.trim()).filter(Boolean),
-    stack:document.getElementById('addStack').value||'css',
-    source:'My Own', desc:name, code,
-  };
-  custom.push(c); allComps=[...BUILT_IN,...custom];
-  savePersisted(); updateCounts(); render();
-  closeModal('addModal');
-  showToast('Saved!');
-  scheduleSyncToGitHub();
-  ['addName','addTags','addCode'].forEach(id=>document.getElementById(id).value='');
-}
-
-// ── IMPORT ────────────────────────────────────────────────────────────────────
-function importJSON(input) {
-  const file=input.files[0];
-  if(!file)return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    try {
-      const data=JSON.parse(e.target.result);
-      const incoming=data.components||(Array.isArray(data)?data:[data]);
-      const existing=new Set(allComps.map(c=>c.id));
-      let added=0,dupes=0;
-      incoming.forEach(c=>{
-        if(!c.id)c.id='imp-'+Date.now()+'-'+Math.random().toString(36).slice(2,5);
-        if(existing.has(c.id)){dupes++;return;}
-        c.category=c.category||'custom';c.tags=c.tags||[c.category];c.desc=c.desc||c.name;c.code=c.code||'<!-- no code -->';
-        custom.push(c);existing.add(c.id);added++;
-      });
-      allComps=[...BUILT_IN,...custom];
-      savePersisted();updateCounts();render();
-      showToast(`Imported ${added}${dupes?' ('+dupes+' skipped)':''}`);
-      scheduleSyncToGitHub();
-    } catch(err){showToast('Invalid JSON',true);}
-    input.value='';
-  };
-  reader.readAsText(file);
-}
-
-// ── SETTINGS ──────────────────────────────────────────────────────────────────
-function openSettings() {
-  document.getElementById('gh-owner').value=GH.owner;
-  document.getElementById('gh-repo').value=GH.repo;
-  document.getElementById('gh-token').value=GH.token;
-  document.getElementById('s-test-result').style.display='none';
-  document.getElementById('settingsModal').classList.add('open');
-}
-
-function saveSettings() {
-  localStorage.setItem('gh_owner',document.getElementById('gh-owner').value.trim());
-  localStorage.setItem('gh_repo', document.getElementById('gh-repo').value.trim());
-  localStorage.setItem('gh_token',document.getElementById('gh-token').value.trim());
-  localStorage.setItem('gh_branch','main');
-  closeModal('settingsModal');
-  showToast('GitHub connected!');
-  setSyncStatus('ok','Connected');
-}
-
-async function testConnection() {
-  const o=document.getElementById('gh-owner').value.trim();
-  const r=document.getElementById('gh-repo').value.trim();
-  const t=document.getElementById('gh-token').value.trim();
-  const el=document.getElementById('s-test-result');
-  el.style.display='block';el.textContent='Testing...';el.className='s-test';
-  try {
-    const res=await fetch(`https://api.github.com/repos/${o}/${r}`,{headers:{'Authorization':`Bearer ${t}`,'Accept':'application/vnd.github.v3+json'}});
-    if(res.ok){const d=await res.json();el.textContent=`✓ Connected — ${d.full_name}`;el.className='s-test ok';}
-    else{el.textContent=`✗ Failed (${res.status})`;el.className='s-test err';}
-  } catch(e){el.textContent='✗ Network error';el.className='s-test err';}
-}
-
-// ── SYNC SCHEDULE ─────────────────────────────────────────────────────────────
-let syncTimer=null;
-function scheduleSyncToGitHub() {
-  if(!GH.configured())return;
-  if(syncTimer)clearTimeout(syncTimer);
-  setSyncStatus('busy','Pending...');
-  syncTimer=setTimeout(()=>saveToGitHub(allComps),4000);
-}
-
-// ── HELPERS ───────────────────────────────────────────────────────────────────
-function closeModal(id){document.getElementById(id).classList.remove('open')}
-function closeBg(e,id){if(e.target.id===id)closeModal(id)}
-
-function showToast(msg,isErr=false) {
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.className='toast show'+(isErr?' err':'');
-  setTimeout(()=>t.className='toast',2400);
-}
-
-// Drag & drop JSON
-const dropZone=document.getElementById('dropZone');
-document.addEventListener('dragenter',e=>{if([...e.dataTransfer.types].includes('Files')){dropZone.classList.add('active');dropZone.style.pointerEvents='all'}});
-document.addEventListener('dragleave',e=>{if(!e.relatedTarget||!document.body.contains(e.relatedTarget)){dropZone.classList.remove('active');dropZone.style.pointerEvents='none'}});
-document.addEventListener('dragover',e=>e.preventDefault());
-document.addEventListener('drop',e=>{
-  e.preventDefault();dropZone.classList.remove('active');dropZone.style.pointerEvents='none';
-  const file=e.dataTransfer.files[0];
-  if(!file||!file.name.endsWith('.json')){showToast('Drop a .json file',true);return;}
-  importJSON({files:[file],value:''});
-});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')['codeModal','settingsModal','addModal'].forEach(id=>closeModal(id))});
-
-
-// ── BUILD MODE ────────────────────────────────────────────────────────────────
+let favorites = {};
+let activeFilter = { kind:'cat', value:'all' };
+let activeStack = 'All';
+let searchQuery = '';
+let sortOrder = 'default';
+let viewSize = 'md';
+let activeTab = 'components';
 let buildModeActive = false;
-let buildProject = {
-  businessName: '',
-  clientType: '',
-  primaryColor: '#c9a84c',
-  secondaryColor: '#1a1a2e',
-  activeSection: null,
-  sections: {} // { sectionType: { included: bool, component: null } }
+let build = {
+  businessName:'', clientType:'Artist', primary:'#c9a84c', secondary:'#121212',
+  activeSection:'hero', selections:{},
 };
-
-// Section configs per client type
-const CLIENT_SECTIONS = {
-  artist:       ['hero','about','music','gallery','events','contact','footer'],
-  nonprofit:    ['hero','about','donate','events','gallery','team','contact','footer'],
-  restaurant:   ['hero','menu','gallery','about','events','contact','footer'],
-  service:      ['hero','about','services','process','testimonials','pricing','contact','footer'],
-  ecommerce:    ['hero','about','products','gallery','testimonials','contact','footer'],
-  'music-events':['hero','events','gallery','about','contact','footer'],
-  corporate:    ['hero','about','services','team','testimonials','contact','footer'],
-  default:      ['hero','about','services','gallery','contact','footer'],
-};
-
-const SECTION_LABELS = {
-  hero:'Hero', about:'About', music:'Music', gallery:'Gallery',
-  events:'Events', contact:'Contact', footer:'Footer', donate:'Donations',
-  menu:'Menu', services:'Services', process:'Process', testimonials:'Testimonials',
-  pricing:'Pricing', products:'Products', team:'Team',
-};
-
-// What components to show for each section type
-const SECTION_FILTERS = {
-  hero:         { cats:['backgrounds','layouts','text'], keywords:['hero','landing','banner','full'] },
-  about:        { cats:['cards','layouts'], keywords:['about','story','bio','team'] },
-  music:        { cats:['cards','galleries','animation'], keywords:['music','audio','album','player'] },
-  gallery:      { cats:['galleries','cards'], keywords:['gallery','grid','photo','image','masonry'] },
-  events:       { cats:['cards','layouts'], keywords:['event','date','schedule','ticket','calendar'] },
-  services:     { cats:['cards','layouts'], keywords:['service','feature','card','grid','icon'] },
-  process:      { cats:['layouts','cards'], keywords:['step','process','how','timeline'] },
-  testimonials: { cats:['cards'], keywords:['testimonial','review','quote','feedback','star'] },
-  pricing:      { cats:['layouts','cards'], keywords:['pricing','plan','tier','cost','price'] },
-  menu:         { cats:['layouts','cards','forms'], keywords:['menu','list','food','table'] },
-  donate:       { cats:['cards','forms','layouts'], keywords:['donate','fund','campaign','support'] },
-  contact:      { cats:['forms','layouts','cards'], keywords:['contact','form','input','email','map'] },
-  footer:       { cats:['layouts','navigation'], keywords:['footer','bottom','links','social'] },
-  products:     { cats:['cards','galleries'], keywords:['product','shop','ecommerce','item'] },
-  team:         { cats:['cards'], keywords:['team','people','staff','member','profile'] },
-  animation:    { cats:['animation','backgrounds'], keywords:['loader','animate','motion','gsap'] },
-  navigation:   { cats:['navigation'], keywords:['nav','menu','header','sidebar'] },
-};
-
-function toggleBuildMode() {
-  buildModeActive = !buildModeActive;
-  document.getElementById('buildModeBtn').style.background      = buildModeActive ? 'var(--gd1)' : '';
-  document.getElementById('buildModeBar').classList.toggle('active', buildModeActive);
-  document.getElementById('buildWorkspace').classList.toggle('active', buildModeActive);
-  document.getElementById('sidebar').style.display              = buildModeActive ? 'none' : '';
-  document.getElementById('buildFilterBar').classList.toggle('active', buildModeActive);
-
-  if (buildModeActive) {
-    showToast('Build Mode — Select a client type to start');
-    updateBuildSections();
-  } else {
-    // Reset
-    buildProject.activeSection = null;
-    render(); // Normal render
-  }
-}
-
-function updateBuildSections() {
-  const ct = document.getElementById('bwClientType').value;
-  buildProject.clientType = ct;
-  buildProject.businessName = document.getElementById('bwBusinessName').value;
-
-  const sectionList = CLIENT_SECTIONS[ct] || CLIENT_SECTIONS.default;
-
-  // Init sections
-  buildProject.sections = {};
-  sectionList.forEach(s => {
-    buildProject.sections[s] = buildProject.sections[s] || { included: true, component: null };
-  });
-
-  // Set first section as active
-  if (!buildProject.activeSection || !buildProject.sections[buildProject.activeSection]) {
-    buildProject.activeSection = sectionList[0] || 'hero';
-  }
-
-  // Update sidebar section list
-  const container = document.getElementById('bwSectionList');
-  container.innerHTML = sectionList.map(s => {
-    const comp = buildProject.sections[s]?.component;
-    const isActive = s === buildProject.activeSection;
-    const isDone = !!comp;
-    return \`<div class="bw-section-item \${isActive?'bsi-active':isDone?'bsi-done':''}" onclick="setActiveSection('\${s}')">
-      <div class="bsi-status \${isDone?'done':isActive?'active':''}">
-        \${isDone ? '✓' : isActive ? '→' : ''}
-      </div>
-      <div class="bsi-name">\${SECTION_LABELS[s] || s}</div>
-      \${comp ? \`<div class="bsi-comp">\${comp.name.slice(0,15)}…</div>\` : ''}
-    </div>\`;
-  }).join('');
-
-  // Update top bar
-  document.getElementById('bmClientLabel').textContent = ct ? (ct.charAt(0).toUpperCase()+ct.slice(1)+' Site') : 'Select a client type →';
-
-  // Update pills
-  const pills = document.getElementById('bmSectionPills');
-  pills.innerHTML = sectionList.map(s => {
-    const isDone = !!buildProject.sections[s]?.component;
-    return \`<div class="bm-section-pill \${s===buildProject.activeSection?'active-section':''}" onclick="setActiveSection('\${s}')" style="\${isDone?'background:var(--green)22;border-color:var(--green);color:var(--green)':''}">
-      \${isDone?'✓ ':'}\${SECTION_LABELS[s]||s}
-    </div>\`;
-  }).join('');
-
-  // Check if generate is ready
-  const filledCount = Object.values(buildProject.sections).filter(s=>s.component).length;
-  document.getElementById('bmGenerateBtn').disabled = filledCount < 2;
-
-  // Filter main grid
-  setActiveSection(buildProject.activeSection);
-}
-
-function setActiveSection(section) {
-  buildProject.activeSection = section;
-
-  // Update filter bar
-  const filterBar = document.getElementById('buildFilterBar');
-  const filter = SECTION_FILTERS[section] || SECTION_FILTERS.hero;
-  filterBar.innerHTML = \`🔍 Showing components for <strong>\${SECTION_LABELS[section]||section}</strong> section · \${filter.cats.join(', ')} · keywords: \${filter.keywords.slice(0,4).join(', ')}\`;
-
-  // Re-render with build mode active
-  renderBuildMode(section);
-  updateBuildSections();
-}
-
-function renderBuildMode(section) {
-  const filter = SECTION_FILTERS[section] || SECTION_FILTERS.hero;
-  const selectedComp = buildProject.sections[section]?.component;
-
-  let filtered = allComps.filter(c => {
-    const catOk = filter.cats.includes(c.category);
-    const kwOk  = filter.keywords.some(kw =>
-      c.name.toLowerCase().includes(kw) ||
-      (c.desc||'').toLowerCase().includes(kw) ||
-      (c.tags||[]).some(t=>t.toLowerCase().includes(kw))
-    );
-    return catOk || kwOk;
-  });
-
-  // If search query active, also apply it
-  if (searchQ) {
-    const q = searchQ.toLowerCase();
-    filtered = filtered.filter(c =>
-      c.name.toLowerCase().includes(q) || (c.tags||[]).some(t=>t.toLowerCase().includes(q))
-    );
-  }
-
-  document.getElementById('count-display').textContent = filtered.length + ' components for ' + (SECTION_LABELS[section]||section);
-
-  const grid = document.getElementById('grid');
-  if (!filtered.length) {
-    grid.innerHTML = \`<div class="empty"><div class="empty-icon">◻</div><div>No matching components — try browsing All</div></div>\`;
-    return;
-  }
-
-  grid.innerHTML = filtered.map(c => {
-    const isSelected = selectedComp && selectedComp.id === c.id;
-    return \`<div class="c-card \${isSelected?'build-selected':''}">
-      <div class="c-preview" onclick="openCode('\${c.id}')">
-        <iframe srcdoc="\${esc(c.code)}" sandbox="allow-scripts" loading="lazy"></iframe>
-        <div class="c-source-badge">\${c.source||''}</div>
-        <div class="c-preview-overlay">
-          <button class="c-overlay-btn c-add-btn" onclick="event.stopPropagation();selectForSection('\${c.id}')">
-            \${isSelected ? '✓ Selected' : '+ Use for \${SECTION_LABELS[section]||section}'}
-          </button>
-          <button class="c-overlay-btn" onclick="openCode('\${c.id}')">Code</button>
-        </div>
-      </div>
-      <div class="c-foot">
-        <div class="c-name">\${c.name}</div>
-        \${stackBadge(c)}
-        <button class="c-code-btn" onclick="openCode('\${c.id}')">&lt;/&gt;</button>
-      </div>
-    </div>\`;
-  }).join('');
-}
-
-function selectForSection(compId) {
-  const c = allComps.find(x => x.id === compId);
-  if (!c || !buildProject.activeSection) return;
-
-  buildProject.sections[buildProject.activeSection] = {
-    included: true,
-    component: c,
-  };
-
-  showToast(\`✓ \${c.name} selected for \${SECTION_LABELS[buildProject.activeSection]} section\`);
-
-  // Auto-advance to next empty section
-  const sectionList = CLIENT_SECTIONS[buildProject.clientType] || CLIENT_SECTIONS.default;
-  const currentIdx = sectionList.indexOf(buildProject.activeSection);
-  const nextEmpty = sectionList.slice(currentIdx + 1).find(s => !buildProject.sections[s]?.component);
-  if (nextEmpty) {
-    setTimeout(() => setActiveSection(nextEmpty), 300);
-  } else {
-    updateBuildSections();
-    renderBuildMode(buildProject.activeSection);
-  }
-}
-
-function setBuildColor(type, value) {
-  buildProject[type === 'primary' ? 'primaryColor' : 'secondaryColor'] = value;
-  document.getElementById('bw'+type.charAt(0).toUpperCase()+type.slice(1)+'Swatch').style.background = value;
-  document.getElementById('bw'+type.charAt(0).toUpperCase()+type.slice(1)+'Hex').value = value;
-}
-
-function setBuildColorHex(type, value) {
-  if (/^#[0-9a-f]{6}$/i.test(value)) setBuildColor(type, value);
-}
-
-// ── GENERATE SITE FROM BUILD ───────────────────────────────────────────────────
-function generateFromBuild() {
-  const { businessName, clientType, primaryColor, secondaryColor, sections } = buildProject;
-
-  const includedSections = Object.entries(sections)
-    .filter(([,v]) => v.included && v.component)
-    .map(([key, val]) => ({ key, component: val.component }));
-
-  if (includedSections.length < 2) {
-    showToast('Select at least 2 sections first', true);
-    return;
-  }
-
-  const name = businessName || 'My Site';
-  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-
-  // Build the assembled HTML
-  const sectionsHTML = includedSections.map(({ key, component }) => {
-    // Extract just the body content from each component's standalone HTML
-    const bodyMatch = component.code.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
-    const bodyContent = bodyMatch ? bodyMatch[1].trim() : component.code;
-
-    // Extract styles from each component
-    const styleMatch = component.code.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
-    const styles = styleMatch ? styleMatch[1].trim() : '';
-
-    // Extract scripts
-    const scriptMatches = [...component.code.matchAll(/<script(?![^>]*src)[^>]*>([\s\S]*?)<\/script>/gi)];
-    const scripts = scriptMatches.map(m => m[1].trim()).filter(Boolean).join('
-');
-
-    return { key, bodyContent, styles, scripts, name: component.name };
-  });
-
-  const allStyles  = sectionsHTML.map(s => \`/* \${s.name} */
-\${s.styles}\`).join('
-
-');
-  const allScripts = sectionsHTML.map(s => s.scripts).filter(Boolean).join('
-
-');
-  const allBody    = sectionsHTML.map(s =>
-    \`<!-- \${SECTION_LABELS[s.key]||s.key}: \${s.name} -->
-<section id="\${s.key}" style="position:relative">\${s.bodyContent}</section>\`
-  ).join('
-
-');
-
-  const nav = \`<nav style="position:fixed;top:0;left:0;right:0;z-index:100;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(0,0,0,.9);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.07)">
-    <a href="#" style="font-weight:800;font-size:1rem;color:#fff;text-decoration:none;letter-spacing:-.5px">\${name}</a>
-    <div style="display:flex;gap:20px">
-      \${Object.keys(sections).filter(s=>!['footer'].includes(s)).slice(0,5).map(s=>
-        \`<a href="#\${s}" style="font-size:.82rem;color:rgba(255,255,255,.5);text-decoration:none;transition:.15s" onmouseover="this.style.color='white'" onmouseout="this.style.color='rgba(255,255,255,.5)'">\${SECTION_LABELS[s]||s}</a>\`
-      ).join('')}
-    </div>
-  </nav>\`;
-
-  const fullPage = \`<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>\${name}</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-:root {
-  --primary: \${primaryColor};
-  --secondary: \${secondaryColor};
-  --gold: \${primaryColor};
-}
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body { font-family: 'Inter', sans-serif; background: #060606; color: #ccc; margin-top: 60px; }
-section { position: relative; }
-\${allStyles}
-</style>
-</head>
-<body>
-\${nav}
-\${allBody}
-<footer style="background:#030303;padding:40px 24px;text-align:center;color:rgba(255,255,255,.3);font-size:.8rem">
-  © \${new Date().getFullYear()} \${name} · Built by <a href="https://2twofargo.github.io/fargo-design-library" style="color:\${primaryColor}">Fargo</a>
-</footer>
-\${allScripts ? \`<script>\${allScripts}<\/script>\` : ''}
-</body>
-</html>\`;
-
-  // Download
-  const blob = new Blob([fullPage], { type: 'text/html' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = slug + '-website.html';
-  a.click();
-
-  showToast(\`✓ \${name} generated (\${includedSections.length} sections)\`);
-}
-
-function updateBuildPreview() {
-  buildProject.businessName = document.getElementById('bwBusinessName').value;
-}
-
-// Build-aware render — avoids hoisting conflict by using separate function
-function renderComponents() {
-  if (buildModeActive && buildProject.activeSection) {
-    renderBuildMode(buildProject.activeSection);
-  } else {
-    render();
-  }
-}
+let savedProjects = [];
+let openComponent = null;
+let modalTab = 'preview';
+let ghSettings = { owner:'2twofargo', repo:'fargo-design-library', token:'' };
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 async function init() {
   loadPersisted();
+  renderSources([]);
 
-  // Always try public raw URL first — no token needed for public repos
-  const PUBLIC_URL = 'https://raw.githubusercontent.com/2twofargo/fargo-design-library/main/fargo-library.json';
   try {
-    setSyncStatus('busy', 'Loading library...');
-    document.getElementById('count-display').textContent = 'Loading…';
+    document.getElementById('sync-dot').className = 'h-sync-dot animate-pulse';
     const res = await fetch(PUBLIC_URL + '?t=' + Date.now());
-    if (res.ok) {
-      const data = await res.json();
-      const ghComps = data.components || [];
-      if (ghComps.length > 0) {
-        const builtInIds = new Set(BUILT_IN.map(c => c.id));
-        custom = ghComps.filter(c => !builtInIds.has(c.id));
-        savePersisted();
-        allComps = [...BUILT_IN, ...custom];
-        setSyncStatus('ok', ghComps.length + ' components');
-        document.getElementById('syncDot').style.display  = 'block';
-        document.getElementById('syncLabel').style.display = 'block';
-      }
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const remote = (data.components || data || [])
+      .map((it, i) => normalizeComp(it, i))
+      .filter(Boolean);
+    if (remote.length > 0) {
+      allComps = [...custom, ...remote];
+      document.getElementById('sync-dot').className = 'h-sync-dot synced animate-pulse';
+      setSyncLabel(remote.length + ' components');
     }
   } catch(e) {
-    console.warn('Public load failed:', e.message);
+    allComps = [...custom];
+    document.getElementById('sync-dot').style.background = 'var(--red)';
+    setSyncLabel('Offline');
   }
 
-  // Also connect write access if token is configured
-  if (GH.configured()) {
-    document.getElementById('syncBtn').style.display = 'flex';
-  }
-
+  renderSources(allComps);
   updateCounts();
-  renderComponents();
+  render();
+  buildGuide();
 }
+
+function setSyncLabel(text) {
+  const el = document.getElementById('sync-label');
+  el.textContent = text; el.style.display = 'block';
+}
+
+function loadPersisted() {
+  try {
+    const c = localStorage.getItem('fargo-custom');
+    const f = localStorage.getItem('fargo-favorites');
+    const p = localStorage.getItem('fargo-projects');
+    const s = localStorage.getItem('fargo-settings');
+    if (c) custom = JSON.parse(c);
+    if (f) favorites = JSON.parse(f);
+    if (p) savedProjects = JSON.parse(p);
+    if (s) { ghSettings = { ...ghSettings, ...JSON.parse(s) }; loadSettingsUI(); }
+  } catch(e) {}
+  renderProjects();
+}
+
+function normalizeCat(raw) {
+  const v = String(raw||'').toLowerCase();
+  const MAP = { background:'backgrounds', card:'cards', anim:'animation', btn:'buttons', button:'buttons', cta:'buttons', nav:'navigation', layout:'layouts', gallery:'galleries', galleries:'galleries', form:'forms', input:'forms', text:'text', section:'layouts', layouts:'layouts' };
+  for (const [k,v2] of Object.entries(MAP)) { if (v.includes(k)) return v2; }
+  const valid = ['backgrounds','cards','animation','text','buttons','navigation','layouts','galleries','forms','custom'];
+  return valid.includes(v) ? v : 'cards';
+}
+function normalizeStack(raw) {
+  const v = String(raw||'').toLowerCase();
+  if (v.includes('tailwind')) return 'Tailwind';
+  if (v.includes('react')) return 'React';
+  if (v === 'js' || v.includes('javascript')) return 'JS';
+  return 'CSS';
+}
+function normalizeComp(it, i) {
+  const raw = it?.code || it?.html || it?.source || '';
+  if (!raw || typeof raw !== 'string') return null;
+  const code = raw.split('\n').filter(l => !/^\s*\d+\s*$/.test(l)).join('\n');
+  const bm = code.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+  if (bm && bm[1].replace(/\s+/g,'').length === 0) return null;
+  return {
+    id: String(it?.id || 'r-'+i),
+    name: String(it?.name || it?.title || 'Component '+(i+1)),
+    category: normalizeCat(it?.category || it?.type),
+    source: String(it?.source || it?.origin || 'FreeFrontend'),
+    stack: normalizeStack(it?.stack || it?.framework),
+    tags: Array.isArray(it?.tags) ? it.tags.map(String) : [],
+    code,
+  };
+}
+
+// ── FILTERING ─────────────────────────────────────────────────────────────────
+function getFiltered() {
+  let list = allComps;
+
+  if (buildModeActive) {
+    const sections = CLIENT_SECTIONS[build.clientType] || CLIENT_SECTIONS['Artist'];
+    const activeSection = sections.find(s => s.id === build.activeSection);
+    if (activeSection) {
+      list = list.filter(c => activeSection.cats.includes(c.category));
+    }
+  } else if (activeFilter.kind === 'cat' && activeFilter.value !== 'all') {
+    list = list.filter(c => c.category === activeFilter.value);
+  } else if (activeFilter.kind === 'src') {
+    list = list.filter(c => c.source === activeFilter.value);
+  }
+
+  if (activeStack !== 'All') list = list.filter(c => c.stack === activeStack);
+
+  const q = searchQuery.trim().toLowerCase();
+  if (q) {
+    // Natural language search
+    const nlMatch = NL_MAPPINGS.find(m => m.phrases.some(p => q.includes(p)));
+    if (nlMatch) {
+      list = list.filter(c =>
+        nlMatch.cats.includes(c.category) ||
+        c.name.toLowerCase().includes(q) ||
+        c.tags.some(t => t.toLowerCase().includes(q))
+      );
+    } else {
+      list = list.filter(c =>
+        c.name.toLowerCase().includes(q) ||
+        c.source.toLowerCase().includes(q) ||
+        c.tags.some(t => t.toLowerCase().includes(q))
+      );
+    }
+  }
+
+  if (sortOrder === 'name') list = [...list].sort((a,b) => a.name.localeCompare(b.name));
+  else if (sortOrder === 'source') list = [...list].sort((a,b) => a.source.localeCompare(b.source));
+  return list;
+}
+
+// ── RENDER GRID ───────────────────────────────────────────────────────────────
+function render() {
+  const filtered = getFiltered();
+  const grid = document.getElementById('comp-grid');
+  const empty = document.getElementById('empty-state');
+  const loading = document.getElementById('loading-state');
+
+  loading.style.display = 'none';
+  updateCountDisplay(filtered.length);
+
+  if (filtered.length === 0) {
+    grid.style.display = 'none'; empty.style.display = 'flex'; return;
+  }
+  empty.style.display = 'none'; grid.style.display = 'grid';
+
+  grid.innerHTML = filtered.map((c, i) => buildCard(c, i)).join('');
+  setupIntersectionObserver();
+
+  // Update build bar pills
+  if (buildModeActive) updateBuildUI();
+}
+
+function buildCard(c, i) {
+  const sel = buildModeActive && build.selections[build.activeSection] === c.id;
+  const fav = !!favorites[c.id];
+  const sm = STACK_META[c.stack] || STACK_META.CSS;
+  const sections = CLIENT_SECTIONS[build.clientType] || CLIENT_SECTIONS['Artist'];
+  const activeSection = sections.find(s => s.id === build.activeSection);
+  const sectionLabel = activeSection ? activeSection.label : 'Section';
+  const delay = Math.min(i, 15) * 25;
+
+  return `<div class="c-card${sel?' selected':''}" style="animation-delay:${delay}ms" onclick="openCode('${esc(c.id)}')">
+    <div class="c-preview">
+      <div class="c-preview-ph" data-comp-id="${esc(c.id)}"></div>
+      <span class="c-src-badge">${esc(c.source)}</span>
+      <button class="c-fav${fav?' active':''}" onclick="event.stopPropagation();toggleFav('${esc(c.id)}')" aria-label="Favorite">
+        <svg viewBox="0 0 24 24" fill="${fav?'currentColor':'none'}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </button>
+      ${sel?`<span class="c-selected-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Selected</span>`:''}
+      <div class="c-overlay">
+        ${buildModeActive
+          ? `<button class="c-overlay-primary" onclick="event.stopPropagation();selectForSection('${esc(c.id)}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Use for ${esc(sectionLabel)}</button>`
+          : `<button class="c-overlay-primary" onclick="event.stopPropagation();copyCode('${esc(c.id)}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy</button>
+          <button class="c-overlay-secondary" onclick="event.stopPropagation();openCode('${esc(c.id)}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg> Code</button>`
+        }
+      </div>
+    </div>
+    <div class="c-foot">
+      <span class="c-name">${esc(c.name)}</span>
+      <span class="c-stack-badge" style="border-color:${sm.border}55;color:${sm.text}">${esc(c.stack)}</span>
+      <button class="c-code-btn" onclick="event.stopPropagation();openCode('${esc(c.id)}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></button>
+    </div>
+  </div>`;
+}
+
+// ── LAZY LOAD IFRAMES ─────────────────────────────────────────────────────────
+function setupIntersectionObserver() {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const ph = entry.target;
+      const id = ph.dataset.compId;
+      const comp = allComps.find(c => c.id === id);
+      if (!comp) return;
+      const iframe = document.createElement('iframe');
+      iframe.sandbox = 'allow-scripts';
+      iframe.loading = 'lazy';
+      iframe.style.cssText = 'width:100%;height:100%;border:none;pointer-events:none;background:#0b0b0b';
+      iframe.srcdoc = buildSrcDoc(comp);
+      ph.replaceWith(iframe);
+      io.disconnect();
+    });
+  }, { rootMargin: '200px' });
+
+  document.querySelectorAll('.c-preview-ph').forEach(ph => io.observe(ph));
+}
+
+function buildSrcDoc(comp) {
+  const tw = comp.stack === 'Tailwind' ? '<script src="https://cdn.tailwindcss.com"><\/script>' : '';
+  const base = `<style>html,body{margin:0;height:100%}body{background:#0b0b0b;color:#fff;font-family:Inter,system-ui,sans-serif;overflow:hidden;display:grid;place-items:center;position:relative}</style>`;
+  const isFull = /<html[\s>]/i.test(comp.code);
+  if (isFull) {
+    if (/<head[\s>]/i.test(comp.code)) return comp.code.replace(/<head(\s[^>]*)?>/i, m => m + base + tw);
+    return comp.code.replace(/<html(\s[^>]*)?>/i, m => m + '<head>' + base + tw + '</head>');
+  }
+  return `<!doctype html><html><head><meta charset="utf-8">${tw}${base}</head><body>${comp.code}</body></html>`;
+}
+
+// ── UI UPDATES ────────────────────────────────────────────────────────────────
+function updateCounts() {
+  const cats = ['all','backgrounds','cards','animation','text','buttons','navigation','layouts','galleries','forms','custom'];
+  const byCat = {};
+  allComps.forEach(c => { byCat[c.category] = (byCat[c.category]||0)+1; });
+  const el = document.getElementById('cnt-all');
+  if (el) el.textContent = allComps.length;
+  cats.slice(1).forEach(cat => {
+    const el2 = document.getElementById('cnt-'+cat);
+    if (el2) el2.textContent = byCat[cat]||0;
+  });
+}
+
+function updateCountDisplay(n) {
+  const el = document.getElementById('comp-count');
+  const sections = CLIENT_SECTIONS[build.clientType]||CLIENT_SECTIONS['Artist'];
+  const activeSection = sections.find(s => s.id === build.activeSection);
+  if (buildModeActive && activeSection) {
+    el.innerHTML = `Showing for <strong>${activeSection.label}</strong> · ${n} components`;
+  } else {
+    el.innerHTML = `<strong>${n.toLocaleString()}</strong> components`;
+  }
+}
+
+function renderSources(comps) {
+  const bySrc = {};
+  comps.forEach(c => { bySrc[c.source] = (bySrc[c.source]||0)+1; });
+  const sorted = Object.entries(bySrc).sort((a,b) => b[1]-a[1]).slice(0,12);
+  document.getElementById('source-list').innerHTML = sorted.map(([src, cnt]) => `
+    <button class="sb-item" onclick="setFilter('${esc(src)}','src',this)">
+      <span class="sb-dot"></span>
+      <span style="flex:1;text-align:left;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:12px">${esc(src)}</span>
+      <span class="sb-count">${cnt}</span>
+    </button>`).join('');
+}
+
+// ── FILTER HANDLERS ───────────────────────────────────────────────────────────
+function setFilter(value, kind, btn) {
+  activeFilter = { kind, value };
+  document.querySelectorAll('.sb-item').forEach(el => el.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  render();
+}
+function setStack(s, btn) {
+  activeStack = s;
+  document.querySelectorAll('.h-stack-pill').forEach(el => el.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  render();
+}
+function onSearch(v) {
+  searchQuery = v;
+  render();
+}
+function setSort(v) { sortOrder = v; render(); }
+function setViewSize(s, btn) {
+  viewSize = s;
+  document.querySelectorAll('.tb-view-btn').forEach(el => el.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const grid = document.getElementById('comp-grid');
+  const loading = document.getElementById('loading-state');
+  const min = VIEW_SIZES[s];
+  grid.style.gridTemplateColumns = `repeat(auto-fill,minmax(${min}px,1fr))`;
+  loading.style.gridTemplateColumns = `repeat(auto-fill,minmax(${min}px,1fr))`;
+}
+function setTab(t) {
+  activeTab = t;
+  document.getElementById('tab-components').classList.toggle('active', t === 'components');
+  document.getElementById('tab-guide').classList.toggle('active', t === 'guide');
+  document.getElementById('sidebar-components').style.display = t === 'components' ? '' : 'none';
+  document.getElementById('sidebar-guide').style.display = t === 'guide' ? '' : 'none';
+  document.getElementById('guide-view').style.display = t === 'guide' ? 'block' : 'none';
+  document.getElementById('grid-wrap').style.display = t === 'guide' ? 'none' : '';
+  document.getElementById('toolbar').style.display = t === 'guide' ? 'none' : '';
+}
+
+// ── CODE MODAL ────────────────────────────────────────────────────────────────
+function openCode(id) {
+  const comp = allComps.find(c => c.id === id);
+  if (!comp) return;
+  openComponent = comp;
+  modalTab = 'preview';
+  const sm = STACK_META[comp.stack] || STACK_META.CSS;
+  document.getElementById('modal-name').textContent = comp.name;
+  const badge = document.getElementById('modal-stack-badge');
+  badge.textContent = comp.stack;
+  badge.style.borderColor = sm.border+'55'; badge.style.color = sm.text;
+  document.getElementById('modal-iframe').srcdoc = buildSrcDoc(comp);
+  document.getElementById('modal-preview-pane').style.display = '';
+  document.getElementById('modal-code-pane').style.display = 'none';
+  document.querySelectorAll('.modal-tab').forEach((el,i) => el.classList.toggle('active', i===0));
+  openModal('code-modal');
+}
+
+function setModalTab(t, btn) {
+  modalTab = t;
+  document.querySelectorAll('.modal-tab').forEach(el => el.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.getElementById('modal-preview-pane').style.display = t === 'preview' ? '' : 'none';
+  document.getElementById('modal-code-pane').style.display = t === 'code' ? '' : 'none';
+  if (t === 'code' && openComponent) {
+    document.getElementById('modal-code-content').textContent = openComponent.code;
+  }
+}
+function closeCodeModal(e) {
+  if (!e || e.target === document.getElementById('code-modal')) {
+    closeModal('code-modal'); openComponent = null;
+  }
+}
+function copyModalCode() {
+  if (!openComponent) return;
+  copyToClipboard(openComponent.code, document.getElementById('modal-copy-btn'));
+}
+
+// ── BUILD MODE ────────────────────────────────────────────────────────────────
+function toggleBuildMode() {
+  buildModeActive = !buildModeActive;
+  const btn = document.getElementById('build-btn');
+  btn.classList.toggle('active', buildModeActive);
+  document.getElementById('build-bar').classList.toggle('show', buildModeActive);
+  document.getElementById('build-filter-bar').classList.toggle('show', buildModeActive);
+  document.getElementById('build-workspace').classList.toggle('show', buildModeActive);
+  document.getElementById('sidebar').style.display = buildModeActive ? 'none' : '';
+
+  if (buildModeActive) {
+    updateBuildUI();
+    showToast('Build Mode active — select components section by section');
+  }
+  render();
+}
+
+function onClientTypeChange(type) {
+  build.clientType = type;
+  build.activeSection = (CLIENT_SECTIONS[type]||[])[0]?.id || 'hero';
+  build.selections = {};
+  updateBuildUI();
+  render();
+}
+
+function updateBuildUI() {
+  const sections = CLIENT_SECTIONS[build.clientType] || CLIENT_SECTIONS['Artist'];
+  document.getElementById('bb-client-label').textContent = build.clientType + ' Site';
+
+  // Top bar pills
+  document.getElementById('bb-pills').innerHTML = sections.map((s,i) => {
+    const done = !!build.selections[s.id];
+    const isActive = s.id === build.activeSection;
+    const cls = done ? 'bb-pill done' : isActive ? 'bb-pill active' : 'bb-pill empty';
+    return `${i>0?'<span class="bb-sep">·</span>':''}<span class="${cls}" onclick="setActiveSection('${s.id}')" style="cursor:pointer">${done?'✓ ':''} ${s.label}</span>`;
+  }).join('');
+
+  // Sidebar section list
+  document.getElementById('bw-section-list').innerHTML = sections.map(s => {
+    const done = !!build.selections[s.id];
+    const isActive = s.id === build.activeSection;
+    return `<button class="bw-section-item${isActive?' active':''}" onclick="setActiveSection('${s.id}')">
+      ${done
+        ? `<svg class="bw-section-status" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`
+        : isActive
+        ? `<svg class="bw-section-status" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>`
+        : `<svg class="bw-section-status" viewBox="0 0 24 24" fill="none" stroke="var(--fg4)" stroke-width="1.5"><circle cx="12" cy="12" r="9"/></svg>`
+      }
+      <span style="flex:1">${s.label}</span>
+      ${done ? `<span style="font-size:10px;color:var(--fg4);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:70px">${(allComps.find(c=>c.id===build.selections[s.id])||{}).name||'Selected'}</span>` : ''}
+    </button>`;
+  }).join('');
+
+  // Build filter bar
+  const activeSection = sections.find(s => s.id === build.activeSection);
+  if (activeSection) {
+    document.getElementById('build-filter-bar').innerHTML = `🔍 Showing components for <strong>${activeSection.label}</strong> · ${activeSection.cats.join(', ')}`;
+  }
+
+  // Generate button
+  const filled = Object.keys(build.selections).length;
+  const genEnabled = filled >= 2;
+  document.getElementById('bw-gen-btn').disabled = !genEnabled;
+  document.getElementById('bb-gen-btn').style.opacity = genEnabled ? '1' : '.5';
+}
+
+function setActiveSection(id) {
+  build.activeSection = id;
+  updateBuildUI();
+  render();
+}
+
+function selectForSection(id) {
+  const comp = allComps.find(c => c.id === id);
+  if (!comp) return;
+  build.selections[build.activeSection] = id;
+  showToast('✓ ' + comp.name + ' → ' + build.activeSection);
+
+  // Auto advance to next empty section
+  const sections = CLIENT_SECTIONS[build.clientType] || CLIENT_SECTIONS['Artist'];
+  const cur = sections.findIndex(s => s.id === build.activeSection);
+  const next = sections.slice(cur+1).find(s => !build.selections[s.id]);
+  if (next) setTimeout(() => setActiveSection(next.id), 300);
+  else { updateBuildUI(); render(); }
+}
+
+function setBuildColor(type, value) {
+  if (type === 'primary') { build.primary = value; document.getElementById('primary-swatch').style.background = value; document.getElementById('primary-hex').value = value; }
+  else { build.secondary = value; document.getElementById('secondary-swatch').style.background = value; document.getElementById('secondary-hex').value = value; }
+}
+function setBuildColorHex(type, value) {
+  if (/^#[0-9a-f]{6}$/i.test(value)) setBuildColor(type, value);
+}
+
+// ── GENERATE SITE ─────────────────────────────────────────────────────────────
+function generateSite() {
+  const sections = CLIENT_SECTIONS[build.clientType] || CLIENT_SECTIONS['Artist'];
+  const selected = sections.filter(s => build.selections[s.id]).map(s => {
+    const comp = allComps.find(c => c.id === build.selections[s.id]);
+    return { ...s, comp };
+  }).filter(s => s.comp);
+
+  if (selected.length < 2) { showToast('Select at least 2 sections first', 'error'); return; }
+
+  const name = build.businessName || 'My Site';
+  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+  const sections_html = selected.map(s => {
+    const bm = s.comp.code.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+    const body = bm ? bm[1].trim() : s.comp.code;
+    const sm = s.comp.code.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
+    const styles = sm ? sm[1].trim() : '';
+    const scr = [...s.comp.code.matchAll(/<script(?![^>]*src)[^>]*>([\s\S]*?)<\/script>/gi)].map(m => m[1].trim()).filter(Boolean).join('\n');
+    return { id: s.id, label: s.label, body, styles, scr, name: s.comp.name };
+  });
+
+  const allStyles = sections_html.map(s => `/* ${s.label}: ${s.name} */\n${s.styles}`).join('\n\n');
+  const allScripts = sections_html.map(s => s.scr).filter(Boolean).join('\n\n');
+  const allBody = sections_html.map(s => `<!-- ${s.label} -->\n<section id="${s.id}" style="position:relative">${s.body}</section>`).join('\n\n');
+
+  const nav = `<nav style="position:fixed;top:0;left:0;right:0;z-index:100;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(0,0,0,.88);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.07)">
+  <a href="#" style="font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:1rem;color:#fff;letter-spacing:-.5px">${esc(name)}</a>
+  <div style="display:flex;gap:20px">${selected.filter(s=>s.id!=='contact').slice(0,5).map(s=>`<a href="#${s.id}" style="font-size:.82rem;color:rgba(255,255,255,.5);text-decoration:none">${s.label}</a>`).join('')}</div>
+</nav>`;
+
+  const doc = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${esc(name)}</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--primary:${build.primary};--secondary:${build.secondary};--gold:${build.primary}}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:#060606;color:#ccc;margin-top:60px}
+h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif}
+${allStyles}
+</style>
+</head>
+<body>
+${nav}
+${allBody}
+<footer style="background:#030303;padding:40px 24px;text-align:center;color:rgba(255,255,255,.25);font-size:.8rem;border-top:1px solid #111">
+  © ${new Date().getFullYear()} ${esc(name)} · Built by <a href="https://2twofargo.github.io/fargo-design-library" style="color:${build.primary}">Fargo</a>
+</footer>
+${allScripts ? `<script>${allScripts}<\/script>` : ''}
+</body>
+</html>`;
+
+  const blob = new Blob([doc], { type:'text/html' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = slug + '-website.html'; a.click();
+  showToast(`✓ ${name} generated (${selected.length} sections)`);
+}
+
+// ── SAVED PROJECTS ────────────────────────────────────────────────────────────
+function saveCurrentProject() {
+  if (!build.businessName && Object.keys(build.selections).length === 0) { showToast('Add a name and select some sections first', 'error'); return; }
+  const project = { id: 'proj-'+Date.now(), name: build.businessName||'Untitled', clientType: build.clientType, primary: build.primary, secondary: build.secondary, selections: {...build.selections}, savedAt: new Date().toLocaleDateString() };
+  savedProjects = [project, ...savedProjects.slice(0,9)];
+  localStorage.setItem('fargo-projects', JSON.stringify(savedProjects));
+  renderProjects();
+  showToast('Project saved');
+}
+
+function loadProject(id) {
+  const p = savedProjects.find(x => x.id === id);
+  if (!p) return;
+  build = { ...build, businessName: p.name, clientType: p.clientType, primary: p.primary, secondary: p.secondary, selections: {...p.selections} };
+  document.getElementById('bw-name').value = p.name;
+  document.getElementById('bw-type').value = p.clientType;
+  document.getElementById('primary-hex').value = p.primary;
+  document.getElementById('secondary-hex').value = p.secondary;
+  document.getElementById('primary-swatch').style.background = p.primary;
+  document.getElementById('secondary-swatch').style.background = p.secondary;
+  updateBuildUI(); render();
+  showToast('Project loaded: ' + p.name);
+}
+
+function renderProjects() {
+  const el = document.getElementById('bw-projects-list');
+  if (!el) return;
+  el.innerHTML = savedProjects.slice(0,5).map(p => `
+    <div class="bw-project-item" onclick="loadProject('${p.id}')">
+      <div>
+        <div class="bw-project-name">${esc(p.name)}</div>
+        <div class="bw-project-meta">${esc(p.clientType)} · ${p.savedAt}</div>
+      </div>
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--fg4)"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>`).join('') || '<div style="font-size:11px;color:var(--fg4);padding:6px 0">No saved projects yet</div>';
+}
+
+// ── SETTINGS ──────────────────────────────────────────────────────────────────
+function loadSettingsUI() {
+  document.getElementById('s-owner').value = ghSettings.owner || '';
+  document.getElementById('s-repo').value = ghSettings.repo || '';
+  if (ghSettings.token) document.getElementById('s-token').value = ghSettings.token;
+  if (ghSettings.connected) {
+    document.getElementById('settings-status').style.display = 'flex';
+    document.getElementById('settings-status-text').textContent = 'Connected — ' + ghSettings.owner + '/' + ghSettings.repo;
+  }
+}
+function saveSettings() {
+  ghSettings.owner = document.getElementById('s-owner').value.trim();
+  ghSettings.repo = document.getElementById('s-repo').value.trim();
+  ghSettings.token = document.getElementById('s-token').value.trim();
+  localStorage.setItem('fargo-settings', JSON.stringify(ghSettings));
+  closeModal('settings-modal'); showToast('Settings saved');
+}
+async function testGitHubConnection() {
+  const owner = document.getElementById('s-owner').value.trim();
+  const repo = document.getElementById('s-repo').value.trim();
+  const token = document.getElementById('s-token').value.trim();
+  if (!owner || !repo) { showToast('Enter username and repo', 'error'); return; }
+  try {
+    const headers = token ? { Authorization: 'Bearer ' + token } : {};
+    const res = await fetch(`https://api.github.com/repos/${owner}/${repo}`, { headers });
+    if (res.ok) {
+      ghSettings = { ...ghSettings, owner, repo, token, connected: true };
+      localStorage.setItem('fargo-settings', JSON.stringify(ghSettings));
+      document.getElementById('settings-status').style.display = 'flex';
+      document.getElementById('settings-status-text').textContent = 'Connected — ' + owner + '/' + repo;
+      showToast('✓ Connected to ' + owner + '/' + repo);
+    } else { showToast('Connection failed: ' + res.status, 'error'); }
+  } catch(e) { showToast('Connection error', 'error'); }
+}
+
+// ── COMPONENT MANAGEMENT ──────────────────────────────────────────────────────
+function saveComponent() {
+  const name = document.getElementById('add-name').value.trim();
+  const code = document.getElementById('add-code').value.trim();
+  if (!name || !code) { showToast('Name and code are required', 'error'); return; }
+  const comp = {
+    id:'custom-'+Date.now(), name,
+    category: document.getElementById('add-cat').value,
+    source:'My Own', stack: document.getElementById('add-stack').value,
+    tags: document.getElementById('add-tags').value.split(',').map(t=>t.trim()).filter(Boolean),
+    code,
+  };
+  custom = [comp, ...custom];
+  allComps = [...custom, ...allComps.filter(c => !c.id.startsWith('custom-'))];
+  localStorage.setItem('fargo-custom', JSON.stringify(custom));
+  updateCounts(); render();
+  closeModal('add-modal');
+  document.getElementById('add-name').value = ''; document.getElementById('add-code').value = '';
+  showToast('Component added');
+}
+function toggleFav(id) {
+  favorites[id] = !favorites[id];
+  localStorage.setItem('fargo-favorites', JSON.stringify(favorites));
+  render();
+}
+function copyCode(id) {
+  const comp = allComps.find(c => c.id === id);
+  if (comp) copyToClipboard(comp.code);
+}
+
+// ── JSON IMPORT ───────────────────────────────────────────────────────────────
+function importJson(text) {
+  try {
+    const json = JSON.parse(text);
+    const arr = Array.isArray(json) ? json : (json?.components || []);
+    const mapped = arr.map((it,i) => normalizeComp(it,i)).filter(Boolean)
+      .map(c => ({...c, id:'import-'+Date.now()+'-'+Math.random().toString(36).slice(2)}));
+    if (mapped.length) {
+      custom = [...mapped, ...custom];
+      allComps = [...custom, ...allComps.filter(c => !c.id.startsWith('import-'))];
+      localStorage.setItem('fargo-custom', JSON.stringify(custom));
+      renderSources(allComps); updateCounts(); render();
+      showToast(`Imported ${mapped.length} components`);
+    } else { showToast('No valid components found', 'error'); }
+  } catch(e) { showToast('Invalid JSON file', 'error'); }
+}
+function handleFileInput(input) {
+  const file = input.files?.[0];
+  if (file) { file.text().then(importJson); input.value = ''; }
+}
+
+// ── DRAG & DROP ───────────────────────────────────────────────────────────────
+document.addEventListener('dragover', e => { e.preventDefault(); document.getElementById('drop-overlay').classList.add('show'); });
+document.addEventListener('dragleave', e => { if (!e.relatedTarget) document.getElementById('drop-overlay').classList.remove('show'); });
+document.addEventListener('drop', e => {
+  e.preventDefault(); document.getElementById('drop-overlay').classList.remove('show');
+  const file = e.dataTransfer.files?.[0];
+  if (file) file.text().then(importJson);
+});
+
+// ── MOBILE SIDEBAR ────────────────────────────────────────────────────────────
+function toggleSidebar() {
+  const sb = buildModeActive ? document.getElementById('build-workspace') : document.getElementById('sidebar');
+  sb.classList.toggle('open');
+  document.getElementById('sb-backdrop').classList.toggle('show', sb.classList.contains('open'));
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('build-workspace').classList.remove('open');
+  document.getElementById('sb-backdrop').classList.remove('show');
+}
+
+// ── MODALS ────────────────────────────────────────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+// ── CLIENT GUIDE ──────────────────────────────────────────────────────────────
+function buildGuide() {
+  const wrap = document.getElementById('guide-wrap');
+  wrap.innerHTML = `
+    <div class="guide-hero"><h1 class="font-head">Who you build for</h1><p>Each client type maps to a set of sections and a sales angle — the thing you can do that a drag-and-drop platform never will.</p></div>
+    <div class="guide-grid">${CLIENT_TYPES_DATA.map((c,i) => `
+      <article class="guide-card" style="animation-delay:${i*40}ms">
+        <div class="guide-card-top"><span class="guide-card-emoji">${c.emoji}</span><h2 class="guide-card-name font-head">${c.name}</h2></div>
+        <p class="guide-card-desc">${c.description}</p>
+        <div class="guide-tags">${c.needs.map(n=>`<span class="guide-tag">${n}</span>`).join('')}</div>
+        <div class="guide-edge-label">Your Edge</div>
+        <div class="guide-edge">${c.edge}</div>
+      </article>`).join('')}</div>
+    <h2 class="guide-h2 font-head" style="margin-top:36px;margin-bottom:14px">What you do that platforms cannot</h2>
+    <div class="guide-adv-grid">${PLATFORM_ADV.map(a=>`
+      <div class="guide-adv"><h3 class="font-head">${a.title}</h3><p>${a.body}</p></div>`).join('')}
+    </div>`;
+}
+
+// ── UTILITIES ─────────────────────────────────────────────────────────────────
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function copyToClipboard(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('Copied to clipboard');
+    if (btn) { const orig = btn.innerHTML; btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Copied'; setTimeout(()=>btn.innerHTML=orig,1400); }
+  }).catch(() => showToast('Copy failed', 'error'));
+}
+function showToast(msg, type='success') {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.innerHTML = (type==='success'?'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>':'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>') + msg;
+  c.appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateY(8px)'; t.style.transition='.2s'; setTimeout(()=>t.remove(),200); }, 2800);
+}
+
+// ── KEYBOARD ──────────────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.show').forEach(el => el.classList.remove('show'));
+    closeSidebar();
+  }
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); document.getElementById('search').focus(); }
+});
+
+// ── RESPONSIVE ────────────────────────────────────────────────────────────────
+function checkMobile() {
+  const isMobile = window.innerWidth < 768;
+  document.getElementById('menu-btn').style.display = isMobile ? 'flex' : 'none';
+}
+window.addEventListener('resize', checkMobile);
+checkMobile();
+
+// ── START ─────────────────────────────────────────────────────────────────────
 init();
 </script>
 </body>
