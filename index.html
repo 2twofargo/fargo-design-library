@@ -943,7 +943,7 @@ function normalizeComp(it, i) {
   if (!raw || typeof raw !== 'string') return null;
   const code = raw.split('\n').filter(l => !/^\s*\d+\s*$/.test(l)).join('\n');
   const bm = code.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
-  if (bm && bm[1].replace(/\s+/g,'').length === 0) return null;
+  if (bm && bm[1].replace(/\s+|<![-][^>]*>/g,'').length < 5) return null;
   return {
     id: String(it?.id || 'r-'+i),
     name: String(it?.name || it?.title || 'Component '+(i+1)),
@@ -1075,14 +1075,36 @@ function setupIntersectionObserver() {
 }
 
 function buildSrcDoc(comp) {
-  const tw = comp.stack === 'Tailwind' ? '<script src="https://cdn.tailwindcss.com"><\/script>' : '';
-  const base = `<style>html,body{margin:0;height:100%}body{background:#0b0b0b;color:#fff;font-family:Inter,system-ui,sans-serif;overflow:hidden;display:grid;place-items:center;position:relative}</style>`;
-  const isFull = /<html[\s>]/i.test(comp.code);
+  const src = (comp.source || '').toLowerCase();
+  const code = comp.code || '';
+
+  // Source-specific dependency scripts
+  const tw       = comp.stack === 'Tailwind' || src.includes('flowbite') || src.includes('tailwind') || src.includes('daisy') || src.includes('preline')
+                   ? '<script src="https://cdn.tailwindcss.com"><\/script>' : '';
+  const flowbite = src.includes('flowbite')
+                   ? '<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"><\/script>' : '';
+  const alpine   = (src.includes('preline') || src.includes('alpine') || code.includes('x-data') || code.includes('x-show'))
+                   ? '<script defer src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.13.0/cdn.min.js"><\/script>' : '';
+  const preline  = src.includes('preline')
+                   ? '<script src="https://cdnjs.cloudflare.com/ajax/libs/preline/2.0.3/index.min.js"><\/script>' : '';
+  const daisyui  = src.includes('daisy')
+                   ? '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/daisyui/4.4.19/full.min.css">' : '';
+
+  const deps = [tw, daisyui, flowbite, alpine, preline].filter(Boolean).join('\n');
+
+  const base = `<style>
+    html,body{margin:0;height:100%;min-height:100%}
+    body{background:#0b0b0b;color:#fff;font-family:Inter,system-ui,sans-serif;
+         overflow:hidden;display:grid;place-items:center;position:relative;padding:12px}
+  </style>`;
+
+  const isFull = /<html[\s>]/i.test(code);
   if (isFull) {
-    if (/<head[\s>]/i.test(comp.code)) return comp.code.replace(/<head(\s[^>]*)?>/i, m => m + base + tw);
-    return comp.code.replace(/<html(\s[^>]*)?>/i, m => m + '<head>' + base + tw + '</head>');
+    if (/<head[\s>]/i.test(code)) return code.replace(/<head(\s[^>]*)?>/i, m => m + base + deps);
+    return code.replace(/<html(\s[^>]*)?>/i, m => m + '<head>' + base + deps + '</head>');
   }
-  return `<!doctype html><html><head><meta charset="utf-8">${tw}${base}</head><body>${comp.code}</body></html>`;
+  return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+${deps}${base}</head><body>${code}</body></html>`;
 }
 
 // ── UI UPDATES ────────────────────────────────────────────────────────────────
